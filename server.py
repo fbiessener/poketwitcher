@@ -1,4 +1,4 @@
-"""This is my server stub file"""
+"""PokeTwitcher."""
 
 from jinja2 import StrictUndefined
 
