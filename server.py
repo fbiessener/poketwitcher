@@ -36,7 +36,7 @@ def index():
 def add_user():
     """Add new user to database."""
 
-    ### this works but I'd rather the route be separated into "get" and "post" so refactor this for simplicity and clarity later ###
+    ### this works but I'd rather the route be separated into "get" and "post" so refactor this for simplicity and clarity later also needs to check against db and flash a warning if user is already in db, redirect to login? ###
 
     if request.method == "POST":
         email = request.form.get("email")
