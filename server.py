@@ -19,7 +19,6 @@ app.jinja_env.undefined = StrictUndefined
 * need to make sure detail page is linked through all_pokemon page
 * need to make sure homepage is different for logged in users
 * need to make/implement log out
-* need to check namespace of user_id in the session
 * need to separate out the get/post register route for brainsafe clarity
 * see routes for addtl todos
 """
@@ -37,6 +36,10 @@ def add_user():
     """Add new user to database."""
 
     ### this works but I'd rather the route be separated into "get" and "post" so refactor this for simplicity and clarity later also needs to check against db and flash a warning if user is already in db, redirect to login? ###
+
+    ### needs to flash and redirect to login if email already exists in database ###
+
+    ## update password form eventually? ###
 
     if request.method == "POST":
         email = request.form.get("email")
@@ -76,7 +79,9 @@ def login_user():
         flash("Incorrect password")
         return redirect("/login")
 
+    # add user_id to session for conditional view of templates
     session["user_id"] = user.user_id
+    
     flash("Logged in successfully!")
 
     return redirect(f"/{user.user_id}")
@@ -98,16 +103,19 @@ def all_pokemon():
 
     ### Needs to allow logged in users to log a new sighting, get/post separation of route? ###
 
-    pokemon = Pokemon.query.order_by(Pokemon.id).all()
+    pokemon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
 
     return render_template("all_pokemon.html", pokemon=pokemon)
 
 
-@app.route('pokemon/<str:pokemon_name>', methods=["POST"])
+# maybe reformat this whole set up and remove sighting.html
+# instead do a button that just adds for MVP and a pop-up form with AJAX/JS/JQuery/Bootstrap for beyond
+# check syntax on this <pokemon.name>
+@app.route('pokemon/<str:pokemon.name>', methods=["POST"])
 def pokemon_detail(pokemon_name):
     """Detail page for an individual Pokemon."""
 
-    pokemon = Pokemon.query.get(pokemon_name)
+    pokemon = Pokemon.query.get(name)
 
     if 'user_id' not in session:
         return render_template("pokemon.html", pokemon=pokemon)

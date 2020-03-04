@@ -20,6 +20,7 @@ from datetime import datetime
 """
 
 
+# user_id is serialized, I don't think I need it here or in my Fake data
 def load_users():
     """Load users from u.user into database."""
 
@@ -32,9 +33,9 @@ def load_users():
     # Read u.user file and insert data
     for i, row in enumerate(open("seed_data/u.user")):
         row = row.rstrip()
-        id, email, password = row.split("|")
+        user_id, email, password = row.split("|")
 
-        user = User(id=id,
+        user = User(user_id=user_id,
                     email=email,
                     password=password)
 
@@ -48,6 +49,7 @@ def load_users():
     # Once we're done, we should commit our work
     db.session.commit()
 
+# Pokemon ID is specific and needs to be pulled from JSON
 def load_pokemon():
     """Load all the Pokemon Go pokemon from API."""
 
@@ -59,6 +61,7 @@ def load_pokemon():
 
     db.session.commit()
 
+# sighting_id is serialized and probably doesn't need to be here either
 def load_sightings():
     """Load ratings from u.sightings into database."""
 
@@ -107,7 +110,6 @@ def set_val_sighting_id():
     db.session.execute(query, {'new_id': max_id + 1})
     db.session.commit()
 
-
 if __name__ == "__main__":
     connect_to_db(app)
 
@@ -119,3 +121,4 @@ if __name__ == "__main__":
     load_pokemon()
     load_sightings()
     set_val_user_id()
+    set_val_sighting_id()

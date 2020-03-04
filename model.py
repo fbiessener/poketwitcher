@@ -9,7 +9,6 @@ db = SQLAlchemy()
 * test all of this
 * verify necessity of nullable args
 * verify syntax of Boolean args
-* check naming of 'id' and 'type'
 * match naming across files with server and seed
 * make decision regarding 'type' column in database and possible addtl relational table for it
 * make decision regarding 'gender' and possible addtl relational table for it
@@ -23,14 +22,14 @@ class User(db.Model):
     __tablename__ = "users"
 
     ### is 'id' a bad name??? ###
-    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(64), nullable=False)
     password = db.Column(db.String(64), nullable=False)
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return f"<User id={self.id} email={self.email}>"
+        return f"<User id={self.user_id} email={self.email}>"
 
 
 class Pokemon(db.Model):
@@ -38,12 +37,12 @@ class Pokemon(db.Model):
 
     __tablename__ = "pokemon"
 
-    id = db.Column(db.Integer, autoincrement=False, primary_key=True)
+    pokemon_id = db.Column(db.Integer, autoincrement=False, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     shiny = db.Column(db.Boolean(), nullable=False)
     #############################################################
     # gender = db.Column(db.String(1))
-    # type = db.Column(db.String(64))
+    # poke_type = db.Column(db.String(64))
     # alolan = db.Column(db.Boolean())
     # isDitto = db.Column(db.Boolean())
     # img = db.Column(db.Image())
@@ -51,7 +50,7 @@ class Pokemon(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return f"<Pokemon id={self.id} name={self.name}>"
+        return f"<Pokemon id={self.pokemon_id} name={self.name}>"
 
 
 class Sighting(db.Model):
