@@ -21,6 +21,7 @@ app.jinja_env.undefined = StrictUndefined
 * need to make/implement log out
 * need to separate out the get/post register route for brainsafe clarity
 * see routes for addtl todos
+* remap routes to reflect wireframes
 """
 
 

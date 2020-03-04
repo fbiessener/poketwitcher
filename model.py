@@ -41,10 +41,11 @@ class Pokemon(db.Model):
     name = db.Column(db.String(64), nullable=False)
     shiny = db.Column(db.Boolean(), nullable=False)
     #############################################################
-    # gender = db.Column(db.String(1))
-    # poke_type = db.Column(db.String(64))
-    # alolan = db.Column(db.Boolean())
-    # isDitto = db.Column(db.Boolean())
+    gender = db.Column(db.String(1))
+    # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
+    poke_type = db.Column(db.ARRAY(String), dimensions=1, zero_indexes=False)
+    alolan = db.Column(db.Boolean())
+    isDitto = db.Column(db.Boolean())
     # img = db.Column(db.Image())
 
     def __repr__(self):
