@@ -35,27 +35,27 @@ class User(db.Model):
         return f"<User id={self.user_id} email={self.email}>"
 
 
-# class Pokemon(db.Model):
-#     """A Pokemon available in the app Pokemon Go."""
+class Pokemon(db.Model):
+    """A Pokemon available in the app Pokemon Go."""
 
-#     __tablename__ = "pokemon"
+    __tablename__ = "pokemon"
 
-#     pokemon_id = db.Column(db.Integer, autoincrement=False, primary_key=True)
-#     name = db.Column(db.String, nullable=False)
-#     #############################################################
-#     # shiny = db.Column(db.Boolean(), nullable=False)
-#     # gender = db.Column(db.String(1))
-#     # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
-#     # poke_type = db.Column(db.ARRAY(String))
-#     # alolan = db.Column(db.Boolean())
-#     # isDitto = db.Column(db.Boolean())
-#     # img store as url
-#     # img = db.Column(db.String)
+    pokemon_id = db.Column(db.Integer, autoincrement=False, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    #############################################################
+    # shiny = db.Column(db.Boolean(), nullable=False)
+    # gender = db.Column(db.String(1))
+    # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
+    # poke_type = db.Column(db.ARRAY(String))
+    # alolan = db.Column(db.Boolean())
+    # isDitto = db.Column(db.Boolean())
+    # img store as url
+    # img = db.Column(db.String)
 
-#     def __repr__(self):
-#         """Provide helpful representation when printed."""
+    def __repr__(self):
+        """Provide helpful representation when printed."""
 
-#         return f"<Pokemon id={self.pokemon_id} name={self.name}>"
+        return f"<Pokemon id={self.pokemon_id} name={self.name}>"
 
 
 # class Sighting(db.Model):

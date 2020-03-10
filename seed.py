@@ -1,9 +1,10 @@
 """Utility file to seed poketwitcher database from Pokemon API and Faker data in seed_data/"""
 
 from sqlalchemy import func
-from model import User #, Pokemon, Sighting
+from model import User, Pokemon#, Sighting
 from faker import Faker
 from random import choice
+import json
 
 from model import connect_to_db, db
 from server import app
@@ -11,8 +12,6 @@ from datetime import datetime
 
 """ TODOs:
 * this all needs to be tested
-* need to check on the sequencing table set up starting at arbitrary? id # with or without sequencer
-* Pokemon do not have a SERIAL id so no worries there
 """
 
 def load_users():
@@ -37,55 +36,39 @@ def load_users():
         db.session.add(user)
 
         # Progess yay!
-        if i % 100 == 0:
+        if i % 3 == 0:
             print(i)
 
     # Commit all new users to the table
     db.session.commit()
 
-# Pokemon ID is specific and needs to be pulled from JSON
-# Save API call to JSON file
-# def load_json(filename):
-#     """Possibly unnessecary helper function."""
+def load_pokemon():
+    """Load all the Pokemon Go pokemon (586) from JSON."""
 
-#     with open(filename) as file:
-#         jsn = json.load(file)
-#         file.close()
+    print("Pokemon")
 
-#         return jsn
+    Pokemon.query.delete()
 
-# def load_pokemon():
-#     """Load all the Pokemon Go pokemon from JSON."""
+    all_pogo_json = "/home/vagrant/src/projects/app/static/seed_data/all-pogo.json"
 
-#     print("Pokemon")
+    with open(all_pogo_json) as file:
+        poke_dict = json.load(file)
 
-#     Pokemon.query.delete()
+    for i, key in enumerate(poke_dict):
+        pokemon_id = poke_dict[key].get('id')
+        name = poke_dict[key].get('name')
 
-    # nothing below is working at present
-    ############################################################
-    # ??? successfully open and print, but can i use
-    # response = os.path.join('/home/vagrant/src/projects/app/static/seed_data/test3.json')
-    # print(response)
+        new_pokemon = Pokemon(pokemon_id=pokemon_id, 
+                              name=name)
 
-    # with open(response) as test_file:
-    #     data = json.loads(test_file.text)
-    #     # print(data)
+        db.session.add(new_pokemon)
+        # print(new_pokemon)
 
-    #     for i, element in test_file:
-    #         # print('hello')
-    #         pokemon_id, name = test_file[element]
+        # progess yay!
+        if i % 10 == 0:
+            print(i)
 
-    #         new_pokemon = Pokemon(pokemon_id=pokemon_id, 
-    #                               name=name)
-
-    #         db.session.add(new_pokemon)
-    #         print(new_pokemon)
-
-    #         # progess yay!
-    #         if i % 100 == 0:
-    #             print(i)
-
-    # db.session.commit()
+    db.session.commit()
 
 # sighting_id is serialized and probably doesn't need to be here either
 # def load_sightings():
@@ -146,7 +129,7 @@ if __name__ == "__main__":
 
     # Import different types of data
     load_users()
-    # load_pokemon()
+    load_pokemon()
     # load_sightings()
     set_val_user_id()
     # set_val_sighting_id()
