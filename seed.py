@@ -1,7 +1,9 @@
 """Utility file to seed poketwitcher database from Pokemon API and Faker data in seed_data/"""
 
 from sqlalchemy import func
-from model import Pokemon # , Sighting, User
+from model import Pokemon, Sighting, User
+from faker import Faker
+from flask import werkzeug
 
 from model import connect_to_db, db
 from server import app
@@ -10,17 +12,6 @@ from datetime import datetime
 # ???
 import json
 import os
-
-from flask import jsonify
-
-json_data = []
-json_file = "/home/vagrant/src/projects/app/static/seed_data/test3.json"
-
-file = open(json_file)
-
-json_data = jsonify(file)
-
-
 
 """ TODOs:
 * this all needs to be tested
@@ -35,33 +26,33 @@ json_data = jsonify(file)
 
 
 # # user_id is serialized, I don't think I need it here or in my Fake data
-# def load_users():
-#     """Load users from u.user into database."""
+def load_users():
+    """Load users from u.user into database."""
 
-#     print("Users")
+    print("Users")
 
-#     # Delete all rows in table, so if we need to run this a second time,
-#     # we won't be trying to add duplicate users
-#     User.query.delete()
+    # Delete all rows in table, so if we need to run this a second time,
+    # we won't be trying to add duplicate users
+    User.query.delete()
 
-#     # Read u.user file and insert data
-#     for i, row in enumerate(open("seed_data/u.user")):
-#         row = row.rstrip()
-#         user_id, email, password = row.split("|")
+    # Read u.user file and insert data
+    for i, row in enumerate(open("seed_data/u.user")):
+        row = row.rstrip()
+        user_id, email, password = row.split("|")
 
-#         user = User(user_id=user_id,
-#                     email=email,
-#                     password=password)
+        user = User(user_id=user_id,
+                    email=email,
+                    password=password)
 
-#         # We need to add to the session or it won't ever be stored
-#         db.session.add(user)
+        # We need to add to the session or it won't ever be stored
+        db.session.add(user)
 
-#         # progess yay!
-#         if i % 100 == 0:
-#             print(i)
+        # progess yay!
+        if i % 100 == 0:
+            print(i)
 
-#     # Once we're done, we should commit our work
-#     db.session.commit()
+    # Once we're done, we should commit our work
+    db.session.commit()
 
 # Pokemon ID is specific and needs to be pulled from JSON
 # Save API call to JSON file

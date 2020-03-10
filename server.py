@@ -4,13 +4,10 @@ from jinja2 import StrictUndefined
 
 # its dangerous? click?
 from flask import Flask, render_template, redirect, request, flash, session
-from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db#, User, Pokemon, Sighting
 
 app = Flask(__name__)
-
-app.secret_key = "Gotta catch them all,"
 
 app.jinja_env.undefined = StrictUndefined
 
@@ -154,6 +151,9 @@ def pokemon_detail(pokemon_name):
 
 
 if __name__ == "__main__":
+    # session instantiation
+    app.secret_key = "Gotta catch them all,"
+
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
     app.debug = True
@@ -163,6 +163,7 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
+    from flask_debugtoolbar import DebugToolbarExtension
     DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')
