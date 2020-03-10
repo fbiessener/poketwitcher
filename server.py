@@ -13,15 +13,10 @@ app.jinja_env.undefined = StrictUndefined
 
 """ TODO:
 * need to test all of this
-* need to modify all_pokemon so a user can also update their sighting list from there as well as the detail page
-* need to make sure detail page is linked through all_pokemon page
 * need to make sure homepage is different for logged in users
-* need to make/implement log out
-* need to separate out the get/post register route for brainsafe clarity
+* need to implement log out
 * see routes for addtl todos
-* remap routes to reflect wireframes
 """
-
 
 @app.route('/')
 def index():

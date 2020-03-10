@@ -1,33 +1,22 @@
 """Utility file to seed poketwitcher database from Pokemon API and Faker data in seed_data/"""
 
 from sqlalchemy import func
-from model import Pokemon, Sighting, User
+from model import User #, Pokemon, Sighting
 from faker import Faker
-from flask import werkzeug
+from random import choice
 
 from model import connect_to_db, db
 from server import app
 from datetime import datetime
 
-# ???
-import json
-import os
-
 """ TODOs:
 * this all needs to be tested
-* pokemon seed function incomplete, how do I seed from an API?
-* pick an API so I can seed
-* need to check on the sequencing table set up and whether or not I need the id in Users and Sightings since those are SERIAL
+* need to check on the sequencing table set up starting at arbitrary? id # with or without sequencer
 * Pokemon do not have a SERIAL id so no worries there
-* verify namespacing, naming across model/seed/server
-* do not currently know how Faker will output my data so strip/split lines are nominal at present
-* really check up on 'id', seems like I might not be able to use it
 """
 
-
-# # user_id is serialized, I don't think I need it here or in my Fake data
 def load_users():
-    """Load users from u.user into database."""
+    """Create user with Fake and load into database."""
 
     print("Users")
 
@@ -35,23 +24,23 @@ def load_users():
     # we won't be trying to add duplicate users
     User.query.delete()
 
-    # Read u.user file and insert data
-    for i, row in enumerate(open("seed_data/u.user")):
-        row = row.rstrip()
-        user_id, email, password = row.split("|")
+    # Create new users with Faker
+    for i, person in enumerate(range(0, 30)):
+        faker = Faker()
+        email = faker.email()
+        password = faker.password(length=choice(range(10, 16)), special_chars=False, digits=True, upper_case=True, lower_case=True)
 
-        user = User(user_id=user_id,
-                    email=email,
+        user = User(email=email,
                     password=password)
 
-        # We need to add to the session or it won't ever be stored
+        # Add to session
         db.session.add(user)
 
-        # progess yay!
+        # Progess yay!
         if i % 100 == 0:
             print(i)
 
-    # Once we're done, we should commit our work
+    # Commit all new users to the table
     db.session.commit()
 
 # Pokemon ID is specific and needs to be pulled from JSON
@@ -65,12 +54,12 @@ def load_users():
 
 #         return jsn
 
-def load_pokemon():
-    """Load all the Pokemon Go pokemon from JSON."""
+# def load_pokemon():
+#     """Load all the Pokemon Go pokemon from JSON."""
 
-    print("Pokemon")
+#     print("Pokemon")
 
-    Pokemon.query.delete()
+#     Pokemon.query.delete()
 
     # nothing below is working at present
     ############################################################
@@ -106,12 +95,14 @@ def load_pokemon():
 
 #     Sightings.query.delete()
 
-#     for i, row in enumerate(open('seed_data/u.sightings')):
-#         row = row.rstrip()
-#         sighting_id, user_id, pokemon_id, timestamp = row.split("|")[:4]
+#     for i, row in enumerate(range(50)):
+#         faker = Faker()
+#         timestamp = faker.datetime()
+#         user_id = choice(range(1, 30))
+          # how many pmon will be in db?
+#         pokemon_id = choice(range(1, num_of_pmon_in_db))
 
-#         rating = Sighting(sighting_id=sighting_id,
-#                           user_id=user_id,
+#         rating = Sighting(user_id=user_id,
 #                           pokemon_id=pokemon_id,
 #                           timestamp=timestamp)
 
@@ -123,17 +114,17 @@ def load_pokemon():
 
 #     db.session.commit()
 
-# def set_val_user_id():
-#     """Set value for the next user_id after seeding database."""
+def set_val_user_id():
+    """Set value for the next user_id after seeding database."""
 
-#     # Get the Max user_id in the database
-#     result = db.session.query(func.max(User.id)).one()
-#     max_id = int(result[0])
+    # Get the Max user_id in the database
+    result = db.session.query(func.max(User.user_id)).one()
+    max_id = int(result[0])
 
-#     # Set the value for the next user_id to be max_id + 1
-#     query = "SELECT setval('users_id_seq', :new_id)"
-#     db.session.execute(query, {'new_id': max_id + 1})
-#     db.session.commit()
+    # Set the value for the next user_id to be max_id + 1
+    query = "SELECT setval('users_user_id_seq', :new_id)"
+    db.session.execute(query, {'new_id': max_id + 1})
+    db.session.commit()
 
 # def set_val_sighting_id():
 #     """Set value for the next user_id after seeding database."""
@@ -154,8 +145,8 @@ if __name__ == "__main__":
     db.create_all()
 
     # Import different types of data
-    # load_users()
-    load_pokemon()
+    load_users()
+    # load_pokemon()
     # load_sightings()
-    # set_val_user_id()
+    set_val_user_id()
     # set_val_sighting_id()
