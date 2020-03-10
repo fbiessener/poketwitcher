@@ -2,7 +2,7 @@
 <html>
 <head>
   {% block head %}
-  <title>{% block title %}{% endblock %} - PokeTwitcher</title>
+  <title>{% block title %}Inherits base{% endblock %} - PokéTwitcher</title>
   <!-- Put nav bar in here ? need to overwrite button on navbar for login/register html forms -->
   {% endblock %}
   <link rel="stylesheet" 
@@ -13,7 +13,7 @@
 </head>
 <body>
   <div id="content">
-    {% block content %}{% endblock %} 
+    {% block content %}Inherits base{% endblock %} 
   </div>
   <script
     src="https://code.jquery.com/jquery-3.4.1.js"

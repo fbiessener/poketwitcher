@@ -33,61 +33,61 @@ def index():
     return render_template("homepage.html")
 
 
-# @app.route('/register', methods=["GET"])
-# def register_new_user():
+@app.route('/register', methods=["GET"])
+def register_new_user():
     """Register form."""
 
     ### needs to flash and redirect to login if email already exists in database ###
 
-    ## update password form eventually? ###
+    ### update password form eventually? ###
 
-    # return render_template("register.html")
+    return render_template("register_form.html")
 
-# @app.route('/register', methods=["POST"])
-# def add_new_user():
-#     """Add a new user to the database."""
+@app.route('/register', methods=["POST"])
+def add_new_user():
+    """Add a new user to the database."""
 
-#     email = request.form.get("email")
-#     password = request.form.get("password")
+    email = request.form.get("email")
+    password = request.form.get("password")
 
-#     new_user = User(email=email, password=password)
+    new_user = User(email=email, password=password)
 
-#     db.session.add(new_user)
-#     db.session.commit()
+    db.session.add(new_user)
+    db.session.commit()
 
-#     flash(f"User {email} added")
-#     return redirect("/")
+    flash(f"User {email} added")
+    return redirect("/")
 
-# @app.route('/login', methods=["GET"])
-# def login_form():
-#     """Login form."""
+@app.route('/login', methods=["GET"])
+def login_form():
+    """Login form."""
 
-#     return render_template("login.html")
+    return render_template("login_form.html")
 
 
-# @app.route('/login', methods=["POST"])
-# def login_user():
-#     """Logs in user."""
+@app.route('/login', methods=["POST"])
+def login_user():
+    """Logs in user."""
 
-#     # Get login_form variables
-#     email = request.form["email"]
-#     password = request.form["password"]
+    # Get login_form variables
+    email = request.form["email"]
+    password = request.form["password"]
 
-#     user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
 
-#     if not user:
-#         flash("No such user with {email}")
-#         return redirect("/login")
+    if not user:
+        flash("No such user with {email}")
+        return redirect("/login")
 
-#     if user.password != password:
-#         flash("Incorrect password")
-#         return redirect("/login")
+    if user.password != password:
+        flash("Incorrect password")
+        return redirect("/login")
 
-#     # Add user_id to session for conditional view of templates
-#     session["user_id"] = user.user_id
+    # Add user_id to session for conditional view of templates
+    session["user_id"] = user.user_id
     
-#     flash("Logged in successfully!")
-#     return redirect(f"/{user.user_id}")
+    flash("Logged in successfully!")
+    return redirect(f"/{user.user_id}")
 
 
 # @app.route('/logout')
@@ -100,40 +100,44 @@ def index():
 #     return redirect("/")
 
 
-# @app.route('/<int:user_id>')
-# def user_detail(user_id):
-#     """User details."""
+@app.route('/<int:user_id>')
+def user_detail(user_id):
+    """User details."""
 
-#     ### make sure html offers links to homepage AND pokemon list AND log new sighting??? ###
+    ### make sure html offers links to homepage AND pokemon list AND log new sighting??? ###
 
 #     user = User.query.get(user_id)
+    # test user
+    user = {'user_id': 1, 'email': 'gurb@blurb.murb'}
+    
+    return render_template("user.html", user=user)
 
-#     return render_template("user.html", user=user)
 
-# @app.route('/pokemon')
-# def all_pokemon():
-#     """A list of all Pokemon in Pokemon Go."""
+@app.route('/pokemon')
+def all_pokemon():
+    """A list of all Pokemon in Pokemon Go."""
 
-#     ### Needs to allow logged in users to log a new sighting, get/post separation of route? ###
+    ### Needs to allow logged in users to log a new sighting, get/post separation of route? ###
 
-#     """
-#     pseudocode below
-#     if action = click on pokemon.pokemon_id, following add to session:
-#         pokemon = Pokemon.query.filter_by(pokemon_id=pokemon_id).first()
-#         session["pokemon_name"] = pokemon.name 
-#     """
+    """
+    pseudocode below
+    if action = click on pokemon.pokemon_id, following add to session:
+        pokemon = Pokemon.query.filter_by(pokemon_id=pokemon_id).first()
+        session["pokemon_name"] = pokemon.name 
+    """
 
-#     pokemon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
+    # pokemon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
 
-#     return render_template("all_pokemon.html", pokemon=pokemon)
+    # return render_template("all_pokemon.html", pokemon=pokemon)
+    return render_template("all_pokemon.html")
 
 
 # maybe reformat this whole set up and remove sighting.html
 # instead do a button that just adds for MVP and a pop-up form with AJAX/JS/JQuery/Bootstrap for beyond
 # check syntax on this <pokemon.name>
-# @app.route('/pokemon/<string:pokemon_name>', methods=["POST"])
-# def pokemon_detail(pokemon_name):
-#     """Detail page for an individual Pokemon."""
+@app.route('/pokemon/<string:pokemon_name>', methods=["GET"])
+def pokemon_detail(pokemon_name):
+    """Detail page for an individual Pokemon."""
 
 #     pokemon = Pokemon.query.get(name)
 
@@ -143,6 +147,10 @@ def index():
 #         ### Needs SQL queries for adding a new sighting ###
 #         ### Sighting form needs to show the same details as pokemon page as well as letting user log a new sighting ###
 #         return render_template("sighting.html", pokemon=pokemon)
+    # test pokemon
+    pokemon = {'pokemon_id': 1, 'name': 'Bulbasaur'}
+
+    return render_template("pokemon.html", pokemon=pokemon)
 
 
 if __name__ == "__main__":
