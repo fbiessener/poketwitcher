@@ -58,28 +58,29 @@ class Pokemon(db.Model):
         return f"<Pokemon id={self.pokemon_id} name={self.name}>"
 
 
-# class Sighting(db.Model):
-#     """Sighting of an individual Pokemon, belongs to a User."""
+class Sighting(db.Model):
+    """Sighting of an individual Pokemon, belongs to a User."""
 
-#     __tablename__ = "sightings"
+    __tablename__ = "sightings"
 
-#     sighting_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-#     pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'))
-#     # How do I timestamp a sighting? ###
-#     timestamp = db.Column(db.DateTime())
-#     ############################################################
-#     # How do I convert lat and long into a string for this? ###
-#     # location = db.Column(db.String(200))
+    sighting_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    # If I set pokemon_id to unique, will it allow only one of each for the whole db?
+    pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'))
+    # How do I timestamp a sighting? ###
+    timestamp = db.Column(db.DateTime())
+    ############################################################
+    # How do I convert lat and long into a string for this? ###
+    # location = db.Column(db.String(200))
 
-#     # Define relationships to user and pokemon
-#     user = db.relationship("User", db.backref("users", order_by=sighting_id))
-#     pokemon = db.relationship("Pokemon", db.backref("pokemon", order_by=sighting_id))
+    # Define relationships to user and pokemon
+    user = db.relationship("User", backref=db.backref("users", order_by=sighting_id))
+    pokemon = db.relationship("Pokemon", backref=db.backref("pokemon", order_by=sighting_id))
 
-#     def __repr__(self):
-#         """Provide helpful representation when printed."""
+    def __repr__(self):
+        """Provide helpful representation when printed."""
 
-#         return f"<Sighting sighting_id={self.sighting_id} user_id={self.user_id} pokemon_id={self.pokemon_id}>"
+        return f"<Sighting sighting_id={self.sighting_id} user_id={self.user_id} pokemon_id={self.pokemon_id}>"
 
 
 ##############################################################################
