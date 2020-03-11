@@ -1,14 +1,13 @@
 """Utility file to seed poketwitcher database from Pokemon API and Faker data in seed_data/"""
 
 from sqlalchemy import func
-from model import User, Pokemon, Sighting
 from faker import Faker
 from random import choice
+from datetime import datetime
 import json
 
-from model import connect_to_db, db
+from model import connect_to_db, db, User, Pokemon, Sighting
 from server import app
-from datetime import datetime
 
 def json_reader(file_path):
     """Helper function for turning json files into Python dictionaries."""
@@ -34,8 +33,6 @@ def id_grabber():
 
     return pokemon_ids
 
-POKEMON_IDS = id_grabber()
-
 ################################################################################
 
 def load_users():
@@ -56,15 +53,12 @@ def load_users():
         user = User(email=email,
                     password=password)
 
-        # Add to session
-        db.session.add(user)
+        # Add to session and commit
+        user.save()
 
         # Progess yay!
         if i % 10 == 0:
             print(i)
-
-    # Commit all new users to the table
-    db.session.commit()
 
 def load_pokemon():
     """Load all the Pokemon Go pokemon (586) from JSON."""
@@ -83,18 +77,15 @@ def load_pokemon():
         pokemon_id = poke_dict[key].get('id')
         name = poke_dict[key].get('name')
 
-        new_pokemon = Pokemon(pokemon_id=pokemon_id, 
-                              name=name)
-
-        # Add to session
-        db.session.add(new_pokemon)
+        pokemon = Pokemon(pokemon_id=pokemon_id, 
+                          name=name)
+        
+        # Add to session and commit
+        pokemon.save()
 
         # Progess yay!
         if i % 10 == 0:
             print(i)
-
-    # Commit all new pokemon to the table
-    db.session.commit()
 
 def load_sightings():
     """Load ratings from u.sightings into database."""
@@ -103,25 +94,24 @@ def load_sightings():
 
     Sighting.query.delete()
 
+    pokemon_ids = id_grabber()
+
     for i, row in enumerate(range(50)):
         faker = Faker()
         user_id = choice(range(1, 30))
-        pokemon_id = choice(POKEMON_IDS)
+        pokemon_id = choice(pokemon_ids)
         timestamp = faker.date_time()
 
         sighting = Sighting(user_id=user_id,
                             pokemon_id=pokemon_id,
                             timestamp=timestamp)
 
-        # Add to session
-        db.session.add(sighting)
+        # Add to session and commit
+        sighting.save()
 
         # Progess yay!
         if i % 10 == 0:
             print(i)
-
-    # Commit all new sightings to the table
-    db.session.commit()
 
 def set_val_user_id():
     """Set value for the next user_id after seeding database."""

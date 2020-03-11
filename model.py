@@ -14,28 +14,34 @@ db = SQLAlchemy()
 * make decision for location column and datatype
 """
 
-# def login(self.password):
-#     check_password_hash(password, self.password)
+class ModelMixin:
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
-# def create_password(self, password):
-#     self.password = generate_password_hash(password)
 
-class User(db.Model):
+class User(ModelMixin, db.Model):
     """User of PokeTwitcher website."""
 
     __tablename__ = "users"
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    email = db.Column(db.String, unique=True)
-    password = db.Column(db.String, unique=True)
+    email = db.Column(db.String(64), unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
         return f"<User id={self.user_id} email={self.email}>"
 
+    def create_password(self, password):
+        self.password = generate_password_hash(password)
 
-class Pokemon(db.Model):
+    def login(self, password):
+        check_password_hash(password, self.password)
+
+
+class Pokemon(ModelMixin, db.Model):
     """A Pokemon available in the app Pokemon Go."""
 
     __tablename__ = "pokemon"
@@ -58,8 +64,8 @@ class Pokemon(db.Model):
         return f"<Pokemon id={self.pokemon_id} name={self.name}>"
 
 
-class Sighting(db.Model):
-    """Sighting of an individual Pokemon, belongs to a User."""
+class Sighting(ModelMixin, db.Model):
+    """Sighting of an individual Pokemon, belongs to a User and a Pokemon."""
 
     __tablename__ = "sightings"
 
@@ -67,7 +73,7 @@ class Sighting(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     # If I set pokemon_id to unique, will it allow only one of each for the whole db?
     pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'))
-    # How do I timestamp a sighting? ###
+    # How do I timestamp a sighting?
     timestamp = db.Column(db.DateTime())
     ############################################################
     # How do I convert lat and long into a string for this? ###
@@ -89,7 +95,6 @@ class Sighting(db.Model):
 def connect_to_db(app):
     """Connect the database to Flask app."""
 
-    # Configure to use PostgreSQL database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///poketwitcher'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
@@ -97,9 +102,10 @@ def connect_to_db(app):
 
 
 if __name__ == "__main__":
-    # As a convenience, if we run this module interactively, it will leave
-    # you in a state of being able to work with the database directly.
+    from flask import Flask
+    app = Flask(__name__)
 
-    from server import app
     connect_to_db(app)
+    db.create_all()
+
     print("Connected to DB.")

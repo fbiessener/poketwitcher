@@ -1,11 +1,10 @@
 """PokeTwitcher."""
 
 from jinja2 import StrictUndefined
-
 # its dangerous? click?
 from flask import Flask, render_template, redirect, request, flash, session
 
-from model import connect_to_db, db#, User, Pokemon, Sighting
+from model import connect_to_db, db, User, Pokemon, Sighting
 
 app = Flask(__name__)
 
@@ -94,7 +93,7 @@ def login_user():
 
 @app.route('/<int:user_id>')
 def user_detail(user_id):
-    """User details."""
+    """A user's sightings list."""
 
     ### make sure html offers links to homepage AND pokemon list AND log new sighting??? ###
 
