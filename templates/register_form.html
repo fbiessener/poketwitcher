@@ -4,14 +4,22 @@
   <title>Register New Account</title>
 </head>
 <body>
-  Register a new account:
-  <form>
-    <label for="email">Email: </label>  
-    <input type="text" name="email">
-    <label for="password">Password: </label>
-    <input type="password" name="password">
-    <input type="submit" name="submit" value="Register">
-    <a href="/login">Already registered an account? Log in here</a>
+  <form action="/register" method="post">
+    <div>Register a new account:</div>
+    <div>
+      <label for="email">Email: </label>  
+      <input type="text" name="email">
+    </div>
+    <div>
+      <label for="password">Password: </label>
+      <input type="password" name="password">
+    </div>
+    <div>
+      <input type="submit" name="submit" value="Register">
+    </div>
+    <div>
+      <a href="/login">Already registered an account? Log in here</a>
+    </div>
   </form>
 </body>
 </html>

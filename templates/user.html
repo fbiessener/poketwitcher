@@ -4,7 +4,11 @@
   <title>Life List</title>
 </head>
 <body>
-  Look at all the Pokemon {{ user.email }} has seen!
-  <a href="/pokemon">Return to All Pokemon</a>
+  <form action="/{{ user_id }}" method="get">
+    <div>Look at all the Pokemon {{ user.email }} has seen!</div>
+    <div>
+      <a href="/pokemon">Return to All Pokemon</a>
+    </div>
+  </form>
 </body>
 </html>

@@ -4,14 +4,22 @@
   <title>Log in to your account</title>
 </head>
 <body>
-  Log in to your account:
-  <form>
-    <label for="email">Email: </label>  
-    <input type="text" name="email">
-    <label for="password">Password: </label>
-    <input type="password" name="password">
-    <input type="submit" name="submit" value="Log in">
-    <a href="/register">Haven't registered yet? Make a new account here</a>
+  <form action="/" method="get" id="login">
+    <div>Log in to your account:</div>
+    <div>
+      <label for="email">Email: </label>  
+      <input type="text" name="email">
+    </div>
+    <div>
+      <label for="password">Password: </label>
+      <input type="password" name="password">
+    </div>
+    <div>
+      <input type="submit" name="submit" value="Log in">
+    </div>
+    <div>
+      <a href="/register">Haven't registered yet? Make a new account here</a>
+    </div>
   </form>
 </body>
 </html>

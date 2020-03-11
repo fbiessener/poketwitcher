@@ -24,7 +24,7 @@ def index():
     return render_template("homepage.html")
 
 
-@app.route('/register', methods=["GET"])
+@app.route('/register')
 def register_new_user():
     """Register form."""
 
@@ -34,6 +34,7 @@ def register_new_user():
 
     return render_template("register_form.html")
 
+
 @app.route('/register', methods=["POST"])
 def add_new_user():
     """Add a new user to the database."""
@@ -41,44 +42,51 @@ def add_new_user():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    new_user = User(email=email, password=password)
+    account_available = User.query.filter_by(email=email).first()
 
-    db.session.add(new_user)
-    db.session.commit()
+    if account_available is not None:
+        flash(f"Account already registered to {email}, please log in.")
+    else:
+        new_user = User(email=email, password=password)
 
-    flash(f"User {email} added")
-    return redirect("/")
+        db.session.add(new_user)
+        db.session.commit()
 
-@app.route('/login', methods=["GET"])
-def login_form():
-    """Login form."""
-
-    return render_template("login_form.html")
+        flash(f"User {email} added")
+    return redirect("/login")
 
 
-@app.route('/login', methods=["POST"])
-def login_user():
-    """Logs in user."""
+# @app.route('/login', methods=["GET"])
+# def login_form():
+#     """Login form."""
 
-    # Get login_form variables
-    email = request.form["email"]
-    password = request.form["password"]
+#     return render_template("login_form.html")
 
-    user = User.query.filter_by(email=email).first()
 
-    if not user:
-        flash("No such user with {email}")
-        return redirect("/login")
+# @app.route('/login', methods=["POST"])
+# def login_user():
+#     """Logs in user."""
 
-    if user.password != password:
-        flash("Incorrect password")
-        return redirect("/login")
+#     # Get login_form variables
+#     email = request.form["email"]
+#     password = request.form["password"]
 
-    # Add user_id to session for conditional view of templates
-    session["user_id"] = user.user_id
+#     user = User.query.filter_by(email=email).first()
+
+#     if not user:
+#         flash("No such user with {email}")
+#         return redirect("/login")
+
+#     if user.password != password:
+#         flash("Incorrect password")
+#         return redirect("/login")
+
+#     # Add user_id to session for conditional view of templates
+#     session["user_id"] = user.user_id
     
-    flash("Logged in successfully!")
-    return redirect(f"/{user.user_id}")
+#     flash("Logged in successfully!")
+#     # return redirect(f"/{user.user_id}")
+#     return redirect("/")
 
 
 # @app.route('/logout')
@@ -91,17 +99,17 @@ def login_user():
 #     return redirect("/")
 
 
-@app.route('/<int:user_id>')
-def user_detail(user_id):
-    """A user's sightings list."""
+# @app.route('/<int:user_id>')
+# def user_detail(user_id):
+#     """A user's sightings list."""
 
-    ### make sure html offers links to homepage AND pokemon list AND log new sighting??? ###
+#     ### make sure html offers links to homepage AND pokemon list AND log new sighting??? ###
 
-#     user = User.query.get(user_id)
-    # test user
-    user = {'user_id': 1, 'email': 'gurb@blurb.murb'}
+# #     user = User.query.get(user_id)
+#     # test user
+#     user = {'user_id': 1, 'email': 'gurb@blurb.murb'}
     
-    return render_template("user.html", user=user)
+#     return render_template("user.html", user=user)
 
 
 @app.route('/pokemon')
@@ -138,6 +146,10 @@ def pokemon_detail(pokemon_name):
 #         ### Needs SQL queries for adding a new sighting ###
 #         ### Sighting form needs to show the same details as pokemon page as well as letting user log a new sighting ###
 #         return render_template("sighting.html", pokemon=pokemon)
+
+    # Bottom of: https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/?highlight=order
+    # pokemon = Pokemon.query.get_or_404(pokemon_name)
+
     # test pokemon
     pokemon = {'pokemon_id': 1, 'name': 'Bulbasaur'}
 
