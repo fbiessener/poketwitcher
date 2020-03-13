@@ -14,12 +14,15 @@ app.jinja_env.undefined = StrictUndefined
 * need to test all of this
 * need to make sure homepage is different for logged in users
 * need to implement log out
-* see routes for addtl todos
+* app.logger.info() not printing to server log?
 """
 
 @app.route('/')
 def index():
     """Homepage."""
+
+    app.logger.info("Rendering homepage... ")
+    print("Rendering homepage... ")
 
     return render_template("homepage.html")
 
@@ -31,6 +34,9 @@ def register_new_user():
     ### needs to flash and redirect to login if email already exists in database ###
 
     ### update password form eventually? ###
+
+    # app.logger.info("Rendering registration form... ")
+    print("Rendering registration form... ")
 
     return render_template("register_form.html")
 
@@ -46,6 +52,8 @@ def add_new_user():
 
     if account_available is not None:
         flash(f"Account already registered to {email}, please log in.")
+        # app.logger.info(f'{email} already in DB')
+        print(f'{email} already in DB')
     else:
         new_user = User(email=email, password=password)
 
@@ -53,63 +61,80 @@ def add_new_user():
         db.session.commit()
 
         flash(f"User {email} added")
+        # app.logger.info(f'User {email} added')
+        print(f"User {email} added")
     return redirect("/login")
 
 
-# @app.route('/login', methods=["GET"])
-# def login_form():
-#     """Login form."""
+@app.route('/login')
+def login_form():
+    """Login form."""
 
-#     return render_template("login_form.html")
+    # app.logger.info("Rendering login form... ")
+    print("Rendering login form... ")
+
+    return render_template("login_form.html")
 
 
-# @app.route('/login', methods=["POST"])
-# def login_user():
-#     """Logs in user."""
+@app.route('/login', methods=["POST"])
+def login_user():
+    """Logs in user."""
 
-#     # Get login_form variables
-#     email = request.form["email"]
-#     password = request.form["password"]
+    # Get login_form variables
+    email = request.form["email"]
+    password = request.form["password"]
 
-#     user = User.query.filter_by(email=email).first()
+    # is this doing what i think it's doing?
+    user = User.query.filter_by(email=email).first()
 
-#     if not user:
-#         flash("No such user with {email}")
-#         return redirect("/login")
+    if not user:
+        flash("No such user with {email}")
+        # app.logger.info("No such user with {email}")
+        print("No such user with {email}")
+        return redirect("/login")
 
-#     if user.password != password:
-#         flash("Incorrect password")
-#         return redirect("/login")
+    if user.password != password:
+        flash("Incorrect password")
+        # app.logger.info("Incorrect password")
+        print("Incorrect password")
+        return redirect("/login")
 
-#     # Add user_id to session for conditional view of templates
-#     session["user_id"] = user.user_id
+    # Add user_id to session for conditional view of templates
+    session["user_id"] = user.user_id
     
-#     flash("Logged in successfully!")
-#     # return redirect(f"/{user.user_id}")
-#     return redirect("/")
+    flash("Logged in successfully!")
+    # app.logger.info("User: {user_id} logged in successfully!")
+    print("User {user_id} logged in successfully!")
+
+    # return redirect(f"/user/{user.user_id}")
+    return redirect("/")
 
 
-# @app.route('/logout')
-# def logout():
-#     """Logs out user."""
+@app.route('/logout')
+def logout():
+    """Logs out user."""
 
-#     del session["user_id"]
+    del session["user_id"]
     
-#     flash("You are now logged out")
-#     return redirect("/")
+    flash("You are now logged out")
+    # app.logger.info("User now logged out")
+    print("User logged out")
+
+    return redirect("/")
 
 
-# @app.route('/<int:user_id>')
-# def user_detail(user_id):
-#     """A user's sightings list."""
+@app.route('/user/<int:user_id>')
+def user_detail(user_id):
+    """A user's sightings list."""
 
-#     ### make sure html offers links to homepage AND pokemon list AND log new sighting??? ###
+    ### make sure html offers links to homepage AND pokemon list AND log new sighting??? ###
 
-# #     user = User.query.get(user_id)
-#     # test user
-#     user = {'user_id': 1, 'email': 'gurb@blurb.murb'}
+    user = User.query.get(user_id)
+    # sightings = Sighting.query.filter_by(user_id=user_id).all()
+    # test user
+    # user = {'user_id': 1, 'email': 'gurb@blurb.murb'}
     
-#     return render_template("user.html", user=user)
+    return render_template("user.html", user=user)
 
 
 @app.route('/pokemon')
@@ -125,10 +150,10 @@ def all_pokemon():
         session["pokemon_name"] = pokemon.name 
     """
 
-    # pokemon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
+    all_mon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
 
-    # return render_template("all_pokemon.html", pokemon=pokemon)
-    return render_template("all_pokemon.html")
+    # return render_template("all_pokemon.html", all_mon=all_mon)
+    return render_template("all_pokemon.html", all_mon=all_mon)
 
 
 # maybe reformat this whole set up and remove sighting.html
@@ -138,7 +163,10 @@ def all_pokemon():
 def pokemon_detail(pokemon_name):
     """Detail page for an individual Pokemon."""
 
-#     pokemon = Pokemon.query.get(name)
+    # case SENSITIVE when reaching into db
+    # string check on poke list page if search
+    # if or try 
+    pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
 
 #     if 'user_id' not in session:
 #         return render_template("pokemon.html", pokemon=pokemon)
@@ -151,7 +179,7 @@ def pokemon_detail(pokemon_name):
     # pokemon = Pokemon.query.get_or_404(pokemon_name)
 
     # test pokemon
-    pokemon = {'pokemon_id': 1, 'name': 'Bulbasaur'}
+    # pokemon = {'pokemon_id': 1, 'name': 'Bulbasaur'}
 
     return render_template("pokemon.html", pokemon=pokemon)
 

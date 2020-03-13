@@ -53,6 +53,9 @@ def load_users():
         user = User(email=email,
                     password=password)
 
+        # significantly slows down the db, does work. hash is v long
+        user.create_passhash(password)
+
         # Add to session and commit
         user.save()
 

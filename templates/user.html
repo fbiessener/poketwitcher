@@ -4,8 +4,20 @@
   <title>Life List</title>
 </head>
 <body>
-  <form action="/{{ user_id }}" method="get">
+  <form action="/user/{{ user.user_id }}" method="get">
     <div>Look at all the Pokemon {{ user.email }} has seen!</div>
+    <div>
+      {% if user.sightings %}
+        <h2>Life List:</h2>
+        <ul>
+          {% for sighting in user.sightings %}
+            <li>
+              <a href="=/pokemon/{{ sighting.pokemon.name }}">ID: {{ sighting.pokemon_id }} Name: {{ sighting.pokemon.name }}</a>
+          {% endfor %}
+            </li>
+        </ul>
+      {% endif %}
+    </div>
     <div>
       <a href="/pokemon">Return to All Pokemon</a>
     </div>

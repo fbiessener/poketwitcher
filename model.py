@@ -34,11 +34,11 @@ class User(ModelMixin, db.Model):
 
         return f"<User id={self.user_id} email={self.email}>"
 
-    def create_password(self, password):
+    def create_passhash(self, password):
         self.password = generate_password_hash(password)
 
     def login(self, password):
-        check_password_hash(password, self.password)
+        return check_password_hash(self.password, password)
 
 
 class Pokemon(ModelMixin, db.Model):
@@ -52,9 +52,9 @@ class Pokemon(ModelMixin, db.Model):
     # shiny = db.Column(db.Boolean(), nullable=False)
     # gender = db.Column(db.String(1))
     # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
-    # poke_type = db.Column(db.ARRAY(String))
-    # alolan = db.Column(db.Boolean())
-    # isDitto = db.Column(db.Boolean())
+    # poke_type = db.Column(db.ARRAY(String), nullable=False)
+    # alolan = db.Column(db.Boolean(), nullable=False)
+    # isDitto = db.Column(db.Boolean(), nullable=False)
     # img store as url
     # img = db.Column(db.String)
 
@@ -80,8 +80,8 @@ class Sighting(ModelMixin, db.Model):
     # location = db.Column(db.String(200))
 
     # Define relationships to user and pokemon
-    user = db.relationship("User", backref=db.backref("users", order_by=sighting_id))
-    pokemon = db.relationship("Pokemon", backref=db.backref("pokemon", order_by=sighting_id))
+    user = db.relationship("User", backref=db.backref("sightings", order_by=sighting_id))
+    pokemon = db.relationship("Pokemon", backref=db.backref("sightings", order_by=sighting_id))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -89,7 +89,7 @@ class Sighting(ModelMixin, db.Model):
         return f"<Sighting sighting_id={self.sighting_id} user_id={self.user_id} pokemon_id={self.pokemon_id}>"
 
 
-##############################################################################
+################################################################################
 # Helper functions
 
 def connect_to_db(app):
