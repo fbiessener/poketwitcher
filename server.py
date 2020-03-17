@@ -56,9 +56,10 @@ def add_new_user():
         print(f'{email} already in DB')
     else:
         new_user = User(email=email, password=password)
+        #hashing password before storing it
+        new_user.create_passhash(password)
 
-        db.session.add(new_user)
-        db.session.commit()
+        new_user.save()
 
         flash(f"User {email} added")
         # app.logger.info(f'User {email} added')
@@ -68,7 +69,7 @@ def add_new_user():
 
 @app.route('/login')
 def login_form():
-    """Login form."""
+    """Log-in form."""
 
     # app.logger.info("Rendering login form... ")
     print("Rendering login form... ")
@@ -107,7 +108,7 @@ def login_user():
     print("User {user_id} logged in successfully!")
 
     # return redirect(f"/user/{user.user_id}")
-    return redirect("/")
+    return redirect("/user/<user_id>", user_id=user_id)
 
 
 @app.route('/logout')
@@ -127,12 +128,7 @@ def logout():
 def user_detail(user_id):
     """A user's sightings list."""
 
-    ### make sure html offers links to homepage AND pokemon list AND log new sighting??? ###
-
-    user = User.query.get(user_id)
-    # sightings = Sighting.query.filter_by(user_id=user_id).all()
-    # test user
-    # user = {'user_id': 1, 'email': 'gurb@blurb.murb'}
+    user = User.query.get_or_404(user_id)
     
     return render_template("user.html", user=user)
 
@@ -140,8 +136,6 @@ def user_detail(user_id):
 @app.route('/pokemon')
 def all_pokemon():
     """A list of all Pokemon in Pokemon Go."""
-
-    ### Needs to allow logged in users to log a new sighting, get/post separation of route? ###
 
     """
     pseudocode below
@@ -152,13 +146,9 @@ def all_pokemon():
 
     all_mon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
 
-    # return render_template("all_pokemon.html", all_mon=all_mon)
     return render_template("all_pokemon.html", all_mon=all_mon)
 
 
-# maybe reformat this whole set up and remove sighting.html
-# instead do a button that just adds for MVP and a pop-up form with AJAX/JS/JQuery/Bootstrap for beyond
-# check syntax on this <pokemon.name>
 @app.route('/pokemon/<string:pokemon_name>', methods=["GET"])
 def pokemon_detail(pokemon_name):
     """Detail page for an individual Pokemon."""
@@ -178,19 +168,24 @@ def pokemon_detail(pokemon_name):
     # Bottom of: https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/?highlight=order
     # pokemon = Pokemon.query.get_or_404(pokemon_name)
 
-    # test pokemon
-    # pokemon = {'pokemon_id': 1, 'name': 'Bulbasaur'}
-
     return render_template("pokemon.html", pokemon=pokemon)
 
 
-if __name__ == "__main__":
-    # session instantiation
-    app.secret_key = "Gotta catch them all,"
+@app.route('/pokemon/<string:pokemon_name>', methods=['POST'])
+def add_sighting(pokemon):
+    """Add new sighting to a user's Life List."""
 
-    # We have to set debug=True here, since it has to be True at the
-    # point that we invoke the DebugToolbarExtension
+    new_sighting = Sighting(user_id=user_id, 
+                            pokemon_id=pokemon.pokemon_id)
+    new_sighting.save()
+
+    return redirect("/user/<user_id>")
+
+
+if __name__ == "__main__":
+    app.secret_key = "Gotta catch them all,"
     app.debug = True
+    app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     # make sure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
 
