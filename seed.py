@@ -60,7 +60,7 @@ def load_users():
         user.save()
 
         # Progess yay!
-        if i % 5 == 0:
+        if i % 10 == 0:
             print(i)
 
 def load_pokemon():
@@ -72,11 +72,10 @@ def load_pokemon():
 
     all_pogo_json = "/home/vagrant/src/projects/app/static/seed_data/all-pogo.json"
 
-    # with open(all_pogo_json) as file:
-    #     poke_dict = json.load(file)
     poke_dict = json_reader(all_pogo_json)
 
     for i, key in enumerate(poke_dict):
+    # for i, key in enumerate(gender_dict):
         pokemon_id = poke_dict[key].get('id')
         name = poke_dict[key].get('name')
 

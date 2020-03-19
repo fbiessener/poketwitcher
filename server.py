@@ -77,28 +77,28 @@ def login_form():
     return render_template("login_form.html")
 
 
-@app.route('/login', methods=["POST"])
-def login_user():
-    """Logs in user."""
+# @app.route('/login', methods=["POST"])
+# def login_user():
+#     """Logs in user."""
 
-    # Get login_form variables
-    email = request.form["email"]
-    password = request.form["password"]
+#     # Get login_form variables
+#     email = request.form["email"]
+#     password = request.form["password"]
 
-    # is this doing what i think it's doing?
-    user = User.query.filter_by(email=email).first()
+#     # is this doing what i think it's doing?
+#     user = User.query.filter_by(email=email).first()
 
-    if not user:
-        flash("No such user with {email}")
-        # app.logger.info("No such user with {email}")
-        print("No such user with {email}")
-        return redirect("/login")
+#     if not user:
+#         flash("No such user with {email}")
+#         # app.logger.info("No such user with {email}")
+#         print("No such user with {email}")
+#         return redirect("/login")
 
-    if not user.login(password):
-        flash("Incorrect password")
-        # app.logger.info("Incorrect password")
-        print("Incorrect password")
-        return redirect("/login")
+#     if not user.login(password):
+#         flash("Incorrect password")
+#         # app.logger.info("Incorrect password")
+#         print("Incorrect password")
+#         return redirect("/login")
 
     # Add user_id to session for conditional view of templates
     session["user_id"] = user.user_id
