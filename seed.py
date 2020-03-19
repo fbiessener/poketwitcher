@@ -60,7 +60,7 @@ def load_users():
         user.save()
 
         # Progess yay!
-        if i % 10 == 0:
+        if i % 5 == 0:
             print(i)
 
 def load_pokemon():

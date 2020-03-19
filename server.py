@@ -94,7 +94,7 @@ def login_user():
         print("No such user with {email}")
         return redirect("/login")
 
-    if user.password != password:
+    if not user.login(password):
         flash("Incorrect password")
         # app.logger.info("Incorrect password")
         print("Incorrect password")
@@ -108,7 +108,7 @@ def login_user():
     print("User {user_id} logged in successfully!")
 
     # return redirect(f"/user/{user.user_id}")
-    return redirect("/user/<user_id>", user_id=user_id)
+    return redirect("/user/<user_id>", user=user)
 
 
 @app.route('/logout')
@@ -175,11 +175,12 @@ def pokemon_detail(pokemon_name):
 def add_sighting(pokemon):
     """Add new sighting to a user's Life List."""
 
-    new_sighting = Sighting(user_id=user_id, 
-                            pokemon_id=pokemon.pokemon_id)
-    new_sighting.save()
+    if user_id in session:
+        new_sighting = Sighting(user_id=user_id, 
+                                pokemon_id=pokemon.pokemon_id)
+        new_sighting.save()
 
-    return redirect("/user/<user_id>")
+    return redirect("/user/<user_id>", user_id=user_id)
 
 
 if __name__ == "__main__":

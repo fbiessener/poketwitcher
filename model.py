@@ -1,6 +1,7 @@
 """Models and database functions for PokeTwitcher project."""
 
 from flask_sqlalchemy import SQLAlchemy
+# from sqlalchemy import func
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -74,7 +75,7 @@ class Sighting(ModelMixin, db.Model):
     # If I set pokemon_id to unique, will it allow only one of each for the whole db?
     pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'))
     # How do I timestamp a sighting?
-    timestamp = db.Column(db.DateTime())
+    timestamp = db.Column(db.DateTime(), server_default=db.func.current_timestamp())
     ############################################################
     # How do I convert lat and long into a string for this? ###
     # location = db.Column(db.String(200))
@@ -92,7 +93,20 @@ class Sighting(ModelMixin, db.Model):
 ################################################################################
 # Helper functions
 
-def connect_to_db(app):
+def example_data():
+    """Create sample data."""
+
+    # Empty out existing data in-between tests
+    User.query.delete()
+    Pokemon.query.delete()
+    Sighting.query.delete()
+
+    # Add sample data
+
+    # Check the demo for testing Flask on set up
+
+
+def connect_to_db(app, db_url="postgresql:///poketwitcher"):
     """Connect the database to Flask app."""
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///poketwitcher'
