@@ -4,36 +4,10 @@ from sqlalchemy import func
 from faker import Faker
 from random import choice
 from datetime import datetime
-import json
 
 from model import connect_to_db, db, User, Pokemon, Sighting
 from server import app
-
-def json_reader(file_path):
-    """Helper function for turning json files into Python dictionaries."""
-
-    with open(file_path) as file:
-        json_dict = json.load(file)
-
-    return json_dict
-
-def id_grabber():
-    """Helper function to grab all the IDs in the DB for sighting generation."""
-
-    # SELECT pokemon_id FROM pokemon;
-
-    pokemon_ids = []
-
-    all_pogo_json = "/home/vagrant/src/projects/app/static/seed_data/all-pogo.json"
-
-    poke_dict = json_reader(all_pogo_json)
-
-    for key in poke_dict:
-        pokemon_ids.append(poke_dict[key].get('id'))
-
-    return pokemon_ids
-
-################################################################################
+from fertilizer import *
 
 def load_users():
     """Create user with Fake and load into database."""
@@ -78,9 +52,11 @@ def load_pokemon():
     # for i, key in enumerate(gender_dict):
         pokemon_id = poke_dict[key].get('id')
         name = poke_dict[key].get('name')
+        gender = genderizer(pokemon_id)
 
         pokemon = Pokemon(pokemon_id=pokemon_id, 
-                          name=name)
+                          name=name,
+                          gender=gender)
         
         # Add to session and commit
         pokemon.save()

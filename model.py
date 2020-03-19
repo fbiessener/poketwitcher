@@ -50,7 +50,7 @@ class Pokemon(ModelMixin, db.Model):
     name = db.Column(db.String, nullable=False)
     #############################################################
     # shiny = db.Column(db.Boolean(), nullable=False)
-    # gender = db.Column(db.String(1))
+    gender = db.Column(db.String(1))
     # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
     # poke_type = db.Column(db.ARRAY(String), nullable=False)
     # alolan = db.Column(db.Boolean(), nullable=False)
