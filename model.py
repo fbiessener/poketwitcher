@@ -1,7 +1,6 @@
 """Models and database functions for PokeTwitcher project."""
 
 from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy import func
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 

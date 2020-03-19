@@ -12,7 +12,7 @@
         <ul>
           {% for sighting in user.sightings %}
             <li>
-              <a href="=/pokemon/{{ sighting.pokemon.name }}">ID: {{ sighting.pokemon_id }} Name: {{ sighting.pokemon.name }}</a>
+              <a href="/pokemon/{{ sighting.pokemon.name }}">ID: {{ sighting.pokemon_id }} Name: {{ sighting.pokemon.name }}</a>
           {% endfor %}
             </li>
         </ul>
@@ -21,6 +21,15 @@
     <div>
       <a href="/pokemon">Return to All Pokemon</a>
     </div>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
   </form>
 </body>
 </html>
