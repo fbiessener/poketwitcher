@@ -74,11 +74,13 @@ def genderizer(poke_id):
 
     gender = ""
 
-    if poke_id in female:
+    if poke_id in male and female:
+        gender = "F/M"
+    elif (poke_id in female) and (poke_id not in male):
         gender = 'F'
-    if poke_id in male:
+    elif (poke_id in male) and (poke_id not in female):
         gender = 'M'
-    if poke_id in genderless:
+    elif poke_id in genderless:
         gender = 'N'
 
     return gender
