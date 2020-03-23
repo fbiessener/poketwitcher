@@ -1,3 +1,4 @@
+# its dangerous? click?
 from flask import Flask, render_template, redirect, request, session, flash
 from functools import wraps
 # from datetime import datetime
@@ -5,12 +6,6 @@ from functools import wraps
 from model import db, User, Pokemon, Sighting
 
 app = Flask(__name__)
-
-# Can I factor this out into a helper function?
-# def no_dave():
-#     if session.get('user_id'):
-#         flash('I can\'t let you do that, Dave.')
-#         return redirect('/')
 
 def login_required(func):
     @wraps(func)
@@ -31,6 +26,8 @@ def user_free(func):
             flash('I can\'t let you do that, Dave.')
             return redirect('/')
     return wrapper
+
+################################################################################
 
 @app.route('/')
 def index():
