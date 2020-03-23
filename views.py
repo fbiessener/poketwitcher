@@ -1,6 +1,7 @@
-from flask import Flask, render_template, redirect, request, flash
+from flask import Flask, render_template, redirect, request, session, flash
+# from datetime import datetime
 
-from model import User
+from model import db, User, Pokemon, Sighting
 
 app = Flask(__name__)
 
@@ -11,6 +12,10 @@ def index():
 
     app.logger.info("Rendering homepage... ")
     print("Rendering homepage... ")
+
+    # different view for logged-in user
+    # if session.get('user_id'):
+    #     return redirect()
 
     return render_template('homepage.html')
 
@@ -87,6 +92,8 @@ def user_detail(user_id):
     """A user's list of sightings."""
 
     user = User.query.get_or_404(user_id)
+
+    # user = session.get('user_id')
     
     return render_template("user.html", user=user)
 
