@@ -100,9 +100,43 @@ def example_data():
     Pokemon.query.delete()
     Sighting.query.delete()
 
-    # Add sample data
+    # Add sample users, pokemon, sightings
+    userA = User(email='some@email.com', password='password')
+    userA.create_passhash(password)
+    userB = User(email='test@test.com', password='p4ssword')
+    userB.create_passhash(password)
+    userC = User(email='another@email.com', password='passw0rd')
+    userC.create_passhash(password)
+    userD = User(email='blank@gmail.com', password='1234')
 
-    # Check the demo for testing Flask on set up
+    bulbasaur = Pokemon(pokemon_id='1', name='Bulbasaur', gender='F/M')
+    chansey = Pokemon(pokemon_id='113', name='Chansey', gender='F')
+    hitmonlee = Pokemon(pokemon_id='106', name='Hitmonlee', gender='M')
+    magnemite = Pokemon(pokemon_id='81', name='Magnemite', gender='N')
+
+    sighting1 = Sighting(user_id=1, 
+                         pokemon_id=1, 
+                         timestamp=datetime(2011, 3, 1, 23, 20, 8))
+    sighting2 = Sighting(user_id=2, 
+                         pokemon_id=113, 
+                         timestamp=datetime(2001, 4, 5, 11, 1, 1))
+    sighting3 = Sighting(user_id=2, 
+                         pokemon_id=81, 
+                         timestamp=datetime(1991, 8, 2, 10, 12, 6))
+    sighting4 = Sighting(user_id=3, 
+                         pokemon_id=81, 
+                         timestamp=datetime(2017, 5, 4, 13, 8, 7))
+    sighting5 = Sighting(user_id=3, 
+                         pokemon_id=106, 
+                         timestamp=datetime(1976, 1, 6, 6, 43, 2))
+    sighting6 = Sighting(user_id=3, 
+                         pokemon_id=1, 
+                         timestamp=datetime(1981, 7, 8, 7, 55, 3))
+
+    db.session.add_all([userA, userB, userC, userD, bulbasaur, chansey, hitmonlee, 
+                        magnemite, sighting1, sighting2, sighting3, sighting4, 
+                        sighting5, sighting6])
+    db.session.commit()
 
 
 def connect_to_db(app, db_url="postgresql:///poketwitcher"):
