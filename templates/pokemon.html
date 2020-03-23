@@ -4,18 +4,16 @@
   <title>{{ pokemon.name }}</title>
 </head>
 <body>
-  <form>
+  <form action="/user/{{ user_id }}" method="POST">
     <div>
       ID: {{ pokemon.pokemon_id }} Name: {{ pokemon.name }}
     </div>
     <div>
-      <form action="/user/{{ user_id }}" method="POST">
         <input type="submit" name="sighting" value="Log a sighting">
-      </form>
     </div>
+  </form>
     <div>
       <a href="/pokemon">Return to All Pokemon</a>
     </div>
-  </form>
 </body>
 </html>
