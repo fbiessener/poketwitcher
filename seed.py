@@ -3,7 +3,6 @@
 from sqlalchemy import func
 from faker import Faker
 from random import choice
-from datetime import datetime
 
 from model import connect_to_db, db, User, Pokemon, Sighting
 from server import app
