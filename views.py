@@ -1,10 +1,27 @@
 from flask import Flask, render_template, redirect, request, session, flash
+from functools import wraps
 # from datetime import datetime
 
 from model import db, User, Pokemon, Sighting
 
 app = Flask(__name__)
 
+# Can I factor this out into a helper function?
+# def no_dave():
+#     if session.get('user_id'):
+#         flash('I can\'t let you do that, Dave.')
+#         return redirect('/')
+
+def login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash("I can\'t let you do that, Dave.")
+            return redirect(url_for('login_page'))
+
+    return wrapper
 
 @app.route('/')
 def index():
@@ -24,6 +41,11 @@ def index():
 def register_new_user():
     """Register form."""
 
+    # Prevent logged-in users from reaching this page
+    if session.get('user_id'):
+        flash('I can\'t let you do that, Dave.')
+        return redirect('/')
+
     app.logger.info('Rendering registration form...')
     print("Rendering registration form... ")
 
@@ -33,11 +55,6 @@ def register_new_user():
 @app.route('/register', methods=["POST"])
 def add_new_user():
     """Add a new user to the database."""
-
-    # Prevent logged-in users from reaching this page
-    if session.get('user_id'):
-        flash('I can\'t let you do that, Dave.')
-        return redirect('/')
 
     app.logger.info('Adding new user to DB...')   
     user_data = request.form
@@ -59,13 +76,13 @@ def add_new_user():
 def login_form():
     """Log-in form."""
 
-    app.logger.info("Rendering login form... ")
-    print("Rendering login form... ")
-
     # Prevent logged-in users from reaching this page
     if session.get('user_id'):
         flash('I can\'t let you do that, Dave.')
         return redirect('/')
+
+    app.logger.info("Rendering login form... ")
+    print("Rendering login form... ")
 
     return render_template('login_form.html')
 
@@ -85,6 +102,7 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     """Log out user."""
 
@@ -98,6 +116,7 @@ def logout():
 
 
 @app.route('/user/<int:user_id>')
+@login_required
 def user_detail(user_id):
     """A user's list of sightings."""
 
@@ -122,6 +141,8 @@ def pokemon_detail(pokemon_name):
     """Detail page for an individual Pokemon."""
 
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
+
+    #if user not logged-in, no add sighting? or pop up on attempt?
 
     return render_template("pokemon.html", pokemon=pokemon)
 
