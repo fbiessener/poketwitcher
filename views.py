@@ -12,23 +12,33 @@ app = Flask(__name__)
 #         flash('I can\'t let you do that, Dave.')
 #         return redirect('/')
 
+# untested
 def login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        if 'logged_in' in session:
+        if 'user_id' in session:
             return f(*args, **kwargs)
         else:
-            flash("I can\'t let you do that, Dave.")
-            return redirect(url_for('login_page'))
-
+            flash('I can\'t let you do that, Dave.')
+            return redirect(url_for('login_form'))
     return wrapper
+
+# untested
+def logout_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'user_id' not in session:
+            return f(*args, **kwargs)
+        else:
+            flash('I can\'t let you do that, Dave.')
+            return redirect(url_for('logout'))
 
 @app.route('/')
 def index():
     """Homepage."""
 
-    app.logger.info("Rendering homepage... ")
-    print("Rendering homepage... ")
+    app.logger.info('Rendering homepage... ')
+    print('Rendering homepage... ')
 
     # different view for logged-in user
     # if session.get('user_id'):
@@ -38,13 +48,9 @@ def index():
 
 
 @app.route('/register')
+@logout_required
 def register_new_user():
     """Register form."""
-
-    # Prevent logged-in users from reaching this page
-    if session.get('user_id'):
-        flash('I can\'t let you do that, Dave.')
-        return redirect('/')
 
     app.logger.info('Rendering registration form...')
     print("Rendering registration form... ")
@@ -73,13 +79,9 @@ def add_new_user():
 
 
 @app.route('/login')
+@logout_required
 def login_form():
     """Log-in form."""
-
-    # Prevent logged-in users from reaching this page
-    if session.get('user_id'):
-        flash('I can\'t let you do that, Dave.')
-        return redirect('/')
 
     app.logger.info("Rendering login form... ")
     print("Rendering login form... ")
