@@ -12,26 +12,25 @@ app = Flask(__name__)
 #         flash('I can\'t let you do that, Dave.')
 #         return redirect('/')
 
-# untested
 def login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         if 'user_id' in session:
-            return f(*args, **kwargs)
+            return func(*args, **kwargs)
         else:
             flash('I can\'t let you do that, Dave.')
-            return redirect(url_for('login_form'))
+            return redirect('/login')
     return wrapper
 
-# untested
-def logout_required(func):
+def user_free(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         if 'user_id' not in session:
-            return f(*args, **kwargs)
+            return func(*args, **kwargs)
         else:
             flash('I can\'t let you do that, Dave.')
-            return redirect(url_for('logout'))
+            return redirect('/')
+    return wrapper
 
 @app.route('/')
 def index():
@@ -48,7 +47,7 @@ def index():
 
 
 @app.route('/register')
-@logout_required
+@user_free
 def register_new_user():
     """Register form."""
 
@@ -59,6 +58,7 @@ def register_new_user():
 
 
 @app.route('/register', methods=["POST"])
+# @user_free
 def add_new_user():
     """Add a new user to the database."""
 
@@ -70,7 +70,7 @@ def add_new_user():
     password = request.form.get("password")
 
     new_user = User(email=email, password=password)
-    new_user.createpass_hash(password)
+    new_user.create_passhash(password)
 
     new_user.save()
 
@@ -79,7 +79,7 @@ def add_new_user():
 
 
 @app.route('/login')
-@logout_required
+@user_free
 def login_form():
     """Log-in form."""
 
@@ -90,7 +90,10 @@ def login_form():
 
 
 @app.route('/login', methods=['POST'])
+# @user_free
 def login():
+    """Logs in user."""
+
     user = User.query.filter_by(email=request.form.get('email')).first()
 
     if user.login(request.form.get('password')):
@@ -100,7 +103,36 @@ def login():
         app.logger.info('Login failed!')
         return render_template('login.html')
 
-    return redirect('/user/<user_id>', user=user)
+    return redirect(f'/user/{user.user_id}')
+
+#     # Get login_form variables
+#     email = request.form["email"]
+#     password = request.form["password"]
+
+#     # is this doing what i think it's doing?
+#     user = User.query.filter_by(email=email).first()
+
+#     if not user:
+#         flash("No such user with {email}")
+#         # app.logger.info("No such user with {email}")
+#         print("No such user with {email}")
+#         return redirect("/login")
+
+#     if not user.login(password):
+#         flash("Incorrect password")
+#         # app.logger.info("Incorrect password")
+#         print("Incorrect password")
+#         return redirect("/login")
+
+    # # Add user_id to session for conditional view of templates
+    # session["user_id"] = user.user_id
+    
+    # flash("Logged in successfully!")
+    # app.logger.info("User: {user_id} logged in successfully!")
+    # print("User {user_id} logged in successfully!")
+
+    # # return redirect(f"/user/{user.user_id}")
+    # return redirect("/user/<user_id>", user=user)
 
 
 @app.route('/logout')
@@ -122,15 +154,16 @@ def logout():
 def user_detail(user_id):
     """A user's list of sightings."""
 
+    user_id = session.get('user_id')
     user = User.query.get_or_404(user_id)
 
-    # user = session.get('user_id')
+    # current error: when user in session, all numbers return session's user_id
     
     return render_template("user.html", user=user)
 
 
 @app.route('/pokemon')
-def function():
+def all_pokemon():
     """A list of all Pokemon in Pokemon Go."""
 
     all_mon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
@@ -142,11 +175,12 @@ def function():
 def pokemon_detail(pokemon_name):
     """Detail page for an individual Pokemon."""
 
+    user_id = session.get('user_id')
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
 
-    #if user not logged-in, no add sighting? or pop up on attempt?
+    # if user not logged-in, no add sighting button? or pop up on attempt?
 
-    return render_template("pokemon.html", pokemon=pokemon)
+    return render_template("pokemon.html", pokemon=pokemon, user_id=user_id)
 
 
 @app.route('/pokemon/<string:pokemon_name>', methods=['POST'])
@@ -157,4 +191,7 @@ def add_sighting(pokemon):
                             pokemon_id=pokemon_id)
     new_sighting.save()
 
-    return redirect("/user/<user_id>")
+    # current error: method not allowed for redirect to user_detail
+
+    flash('New sighting added to Life List')
+    return redirect(f"/user/{user_id}", user=user)
