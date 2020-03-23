@@ -34,6 +34,11 @@ def register_new_user():
 def add_new_user():
     """Add a new user to the database."""
 
+    # Prevent logged-in users from reaching this page
+    if session.get('user_id'):
+        flash('I can\'t let you do that, Dave.')
+        return redirect('/')
+
     app.logger.info('Adding new user to DB...')   
     user_data = request.form
     app.logger.info(f'User data: {user_data}')
@@ -56,6 +61,11 @@ def login_form():
 
     app.logger.info("Rendering login form... ")
     print("Rendering login form... ")
+
+    # Prevent logged-in users from reaching this page
+    if session.get('user_id'):
+        flash('I can\'t let you do that, Dave.')
+        return redirect('/')
 
     return render_template('login_form.html')
 
@@ -125,4 +135,3 @@ def add_sighting(pokemon):
     new_sighting.save()
 
     return redirect("/user/<user_id>")
-
