@@ -43,8 +43,7 @@ def load_pokemon():
 
     Pokemon.query.delete()
 
-    all_pogo_json = "/home/vagrant/src/projects/app/static/seed_data/all-pogo.json"
-
+    all_pogo_json = '/home/vagrant/src/projects/app/static/seed_data/all-pogo.json'
     poke_dict = json_reader(all_pogo_json)
 
     for i, key in enumerate(poke_dict):
@@ -52,10 +51,12 @@ def load_pokemon():
         pokemon_id = poke_dict[key].get('id')
         name = poke_dict[key].get('name')
         gender = genderizer(pokemon_id)
+        poke_type = poke_typer(pokemon_id)
 
         pokemon = Pokemon(pokemon_id=pokemon_id, 
                           name=name,
-                          gender=gender)
+                          gender=gender,
+                          poke_type=poke_type)
         
         # Add to session and commit
         pokemon.save()

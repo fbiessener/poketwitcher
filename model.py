@@ -52,7 +52,7 @@ class Pokemon(ModelMixin, db.Model):
     # shiny = db.Column(db.Boolean(), nullable=False)
     gender = db.Column(db.String(3))
     # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
-    # poke_type = db.Column(db.ARRAY(String), nullable=False)
+    poke_type = db.Column(db.ARRAY(db.String()), nullable=False)
     # alolan = db.Column(db.Boolean(), nullable=False)
     # isDitto = db.Column(db.Boolean(), nullable=False)
     # img store as url

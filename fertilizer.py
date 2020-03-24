@@ -2,8 +2,7 @@
 import json
 
 """ TODO:
-* type needs to be attempted but is less important. only if i want a graphic of poke types as the additional feature
-* alolan is a normal read, but I'll have to check my calls for sighting to make sure it's looking for that variable
+* alolan is a normal read, but ids are the same
 * isDitto should be a randomized chance when clicking the sighting button
 * 
 """
@@ -32,7 +31,7 @@ def id_grabber():
     return pokemon_ids
 
 def gender_grouper():
-    """Groups all Pokemon by gender."""
+    """Returns dictionaries of all Pokemon grouped by gender."""
 
     female = {}
     male = {}
@@ -50,6 +49,7 @@ def gender_grouper():
     # key is gender category
     # value is a list of all pokemon with that gender distribution
     # (list of dictionaries)
+    
     for key, value in gender_dict.items():
         if key == "Genderless":
             for pokemon in value:
@@ -68,10 +68,9 @@ def gender_grouper():
     return female, male, genderless
 
 def genderizer(poke_id):
-    """Determines gender of Pokemon."""
+    """Determines gender of and individual Pokemon."""
     
     female, male, genderless = gender_grouper()
-
     gender = ""
 
     if (poke_id in female) and (poke_id not in male):
@@ -84,3 +83,28 @@ def genderizer(poke_id):
         gender = 'N'
 
     return gender
+def type_normalizer():
+    """Returns dictionary of correct type for 'Normal' form Pokemon."""
+    
+    types = {}
+
+    ptype_json = '/home/vagrant/src/projects/app/static/seed_data/ptype.json'
+    type_list = json_reader(ptype_json)
+
+    for i in range(len(type_list)):
+        if (type_list[i].get('form') == 'Normal') or ('form' not in type_list[i]):
+            poke_id = type_list[i].get('pokemon_id')
+            poke_type = type_list[i].get('type')
+        elif ('Normal' not in type_list[i].get('form')) and (type_list[i].get('pokemon_id') not in types):
+            poke_id = type_list[i].get('pokemon_id')
+            poke_type = type_list[i].get('type')
+        types[poke_id] = poke_type
+
+    return types
+
+def poke_typer(poke_id):
+    """Determines type(s) of an individual Pokemon."""
+
+    types = type_normalizer()
+
+    return types.get(poke_id)
