@@ -151,10 +151,10 @@ def logout():
 def user_detail(user_id):
     """A user's list of sightings."""
 
-    user_id = session.get('user_id')
     user = User.query.get_or_404(user_id)
 
-    # current error: when user in session, all numbers return session's user_id
+    # current error: when user in session, can see other user's life lists
+    # route change to /myprofile so that get_404 and can't see other user's files
     
     return render_template("user.html", user=user)
 
@@ -176,6 +176,7 @@ def pokemon_detail(pokemon_name):
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
 
     # if user not logged-in, no add sighting button? or pop up on attempt?
+    # alter type to appear as something other than an array with Jinja
 
     return render_template("pokemon.html", pokemon=pokemon, user_id=user_id)
 
