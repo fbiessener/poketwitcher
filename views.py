@@ -13,7 +13,7 @@ def login_required(func):
         if 'user_id' in session:
             return func(*args, **kwargs)
         else:
-            flash('I can\'t let you do that, Dave.')
+            flash('Professor Oaks words rang out. \"There\'s a time and a place for everything. But not now!\"')
             return redirect('/login')
     return wrapper
 
@@ -23,10 +23,30 @@ def user_free(func):
         if 'user_id' not in session:
             return func(*args, **kwargs)
         else:
-            flash('I can\'t let you do that, Dave.')
+            flash('Professor Oaks words rang out. \"There\'s a time and a place for everything. But not now!\"')
             return redirect('/')
     return wrapper
 
+def oak_evaluator(num_sightings, username):
+    """Returns evaluation of Pokedex/Life List based on number of sightings a user has."""
+    evaluation = ""
+    
+    if num_sightings <= 10:
+        evaluation = f'You still have lots to do, {username}. Look for Pok\xc3\xa9mon in grassy areas.'
+    elif 10 < num_sightings <= 50:
+        evaluation = f'Good {username}, you\'re trying hard!'
+    elif 50 < num_sightings <= 100:
+        evaluation = f'You finally got at least 50 species, {username}!'
+    elif 100 < num_sightings < 293:
+        evaluation = f'You finally got at least 100 species. I can\'t believe how good you are, {username}!'
+    elif 293 <= num_sightings < 440:
+        evaluation = f'Outstanding! You\'ve become a real pro at this, {username}!'
+    elif 440 <= num_sightings < 586:
+        evaluation = f'I have nothing left to say! You\'re the authority now, {username}!'
+    elif num_sightings == 586:
+        evaluation = f'You\'re Pok\xc3\xa9dex is fully complete! Congratulations, {username}!'
+    
+    return evaluation
 ################################################################################
 
 @app.route('/')
@@ -147,7 +167,6 @@ def logout():
 
 
 @app.route('/user/<int:user_id>')
-@login_required
 def user_detail(user_id):
     """A user's list of sightings."""
 
@@ -158,6 +177,18 @@ def user_detail(user_id):
     
     return render_template("user.html", user=user)
 
+@app.route('/user/myprofile')
+@login_required
+def user_detail(user_id):
+    """A user's list of sightings."""
+
+    user = User.query.get_or_404(user_id)
+
+    # current error: when user in session, can see other user's life lists
+    # route change to /myprofile so that get_404 and can't see other user's files
+    
+    flash('Professor Oak: How is your Pokédex coming? Let\'s see…')
+    return render_template("user.html", user=user)
 
 @app.route('/pokemon')
 def all_pokemon():
@@ -191,5 +222,5 @@ def add_sighting(pokemon):
 
     # current error: method not allowed for redirect to user_detail
 
-    flash('New sighting added to Life List')
+    flash('Professor Oak: Wonderful! Your work is impeccable. Keep up the good work!')
     return redirect(f"/user/{user_id}", user=user)
