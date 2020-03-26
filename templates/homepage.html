@@ -1,6 +1,4 @@
 
-
-
 {%  extends 'base.html' %}
 
 {% block title %}Homepage{% endblock %}
@@ -10,22 +8,30 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col">
-      <br><div class="card">
-        <div class="card-body">
-          <p>Hello there! Welcome to the world of PokéTwitcher! My name is Willow! People call me the Pokémon Prof! This world is inhabited by creatures called Pokémon! For some people, Pokémon are pets. Other use them for fights. Myself… I study Pokémon as a profession. First, what is your name?</p>
-          <div class="card">
+      <div class="row">
+        <div class="col">
+          <br><div class="card">
             <div class="card-body">
-              <input type="submit" name="login" value="Log In">
-              <input type="submit" name="register" value="Register">
+              <p>Hello there! Welcome to the world of PokéTwitcher! My name is Willow! People call me the Pokémon Prof! This world is inhabited by creatures called Pokémon! For some people, Pokémon are pets. Other use them for fights. Myself… I study Pokémon as a profession. First, what is your name?</p>
+              <div class="card">
+                <div class="card-body">
+                  <a class="btn btn-light" href="/login" role="button" name="login">Log In</a>
+                  <a class="btn btn-light" href="/register" role="button" name="register">Register</a>
+                </div>
+              </div>
+              <p>Your very own Pokémon legend is about to unfold! A world of dreams and adventures with Pokémon awaits! Let's go!</p>
             </div>
           </div>
-          Your very own Pokémon legend is about to unfold! A world of dreams and adventures with Pokémon awaits! Let's go!
         </div>
       </div>
-      <div>
-        <p>Want to take a tour first?</p>
-        <input type="submit" name="pokemon_list" value="View All Pokemon">
-        <input type="submit" name="user_list" value="View All Users">
+      <div class="row">
+        <div class="col">
+          <div>
+            <h6>Want to take a tour first?</h6>
+            <a class="btn btn-light" href="/pokemon" role="button" name="pokemon_list">View All Pokemon</a>
+            <a class="btn btn-light" href="/trainers" role="button" name="user_list">View All Trainers</a>
+          </div>
+        </div>
       </div>
     </div>
     <div class="col">
