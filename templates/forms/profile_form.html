@@ -16,11 +16,22 @@
           <div>
             {% if user.sightings %}
               <ul>
-                {% for sighting in user.sightings %}
-                  <li>
-                    <a href="/pokemon/{{ sighting.pokemon.name }}">ID: {{ sighting.pokemon_id }} Name: {{ sighting.pokemon.name }}</a>
-                  </li>
-                {% endfor %}
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for sighting in user.sightings %}
+                    <tr>
+                      <th scope="row"><a href="/pokemon/{{ sighting.pokemon.name }}">{{ sighting.pokemon_id }}</a></th>
+                      <td><a href="/pokemon/{{ sighting.pokemon.name }}">{{ sighting.pokemon.name }}</a></td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
               </ul>
             {% endif %}
           </div>        

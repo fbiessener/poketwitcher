@@ -110,15 +110,15 @@ def poke_typer(poke_id):
 
     return types.get(poke_id)
 
-def all_types():
-    """All possible Pokemon types from DB."""
+# def all_types():
+#     """All possible Pokemon types from DB."""
 
-    types = []
-    all_pmon = type_normalizer()
+#     types = []
+#     all_pmon = type_normalizer()
     
-    for pokemon in all_pmon:
-        p_type = all_pmon.get(pokemon)
-        if p_type not in types:
-            types.append(p_type)
+#     for pokemon in all_pmon:
+#         p_type = all_pmon.get(pokemon)
+#         if p_type not in types:
+#             types.append(p_type)
 
-    return types
+#     return types

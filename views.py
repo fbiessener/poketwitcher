@@ -4,12 +4,8 @@ from functools import wraps
 # from datetime import datetime
 
 from model import db, User, Pokemon, Sighting
-from fertilizer import all_types
 
 app = Flask(__name__)
-
-# For Pie Charts
-TYPES = all_types()
 
 def login_required(func):
     @wraps(func)
@@ -18,7 +14,7 @@ def login_required(func):
             return func(*args, **kwargs)
         else:
             flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
-            return redirect('/login')
+            return redirect('/user/load', next=request.url)
     return wrapper
 
 def user_free(func):
@@ -59,23 +55,7 @@ def willow_evaluator(username, num_sightings=0):
 def test():
     """testing my new bootstrap and charts, delete later"""
 
-    user = User.query.get(3)
-    pokemon = Pokemon.query.filter_by(pokemon_id=102).first_or_404()
-    all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
-
-    p_type = " ".join(pokemon.poke_type)
-
-    seen = 0
-    not_seen = 0
-
-    for row in all_sightings:
-        if row.pokemon_id == pokemon.pokemon_id:
-            seen +=1
-        else:
-            not_seen += 1
-    totals = [seen, not_seen]
-
-    return render_template("pokemon_detail.html", pokemon=pokemon, user_id=user.user_id, totals=totals, p_type=p_type)
+    return render_template('load_user.html')
 
 
 @app.route('/')
@@ -93,17 +73,17 @@ def index():
     return render_template('homepage.html')
 
 
-@app.route('/register')
+@app.route('/user/load')
 @user_free
-def register_new_user():
+def get_user():
     """Register form."""
 
     app.logger.info('Rendering registration form...')
 
-    return render_template("register_form.html")
+    return render_template('load_user.html')
 
 
-@app.route('/register', methods=["POST"])
+@app.route('/user/register', methods=['POST'])
 # @user_free
 def add_new_user():
     """Add a new user to the database."""
@@ -112,26 +92,19 @@ def add_new_user():
     user_data = request.form
     app.logger.info(f'User data: {user_data}')
 
-    email = request.form.get("email")
-    password = request.form.get("password")
+    email = request.form.get('email')
+    username = request.form.get('username')
+    password = request.form.get('password')
 
-    new_user = User(email=email, password=password)
+    new_user = User(email=email, 
+                    username=username, 
+                    password=password)
     new_user.create_passhash(password)
 
     new_user.save()
 
-    flash(f"New account: {email} registered!")
-    return redirect("/login")
-
-
-@app.route('/login')
-@user_free
-def login_form():
-    """Log-in form."""
-
-    app.logger.info("Rendering login form... ")
-
-    return render_template('login_form.html')
+    flash(f'New account: {username} registered! You\'re now ready to log in')
+    return redirect('/user/load')
 
 
 @app.route('/user/login', methods=['POST'])
@@ -139,16 +112,18 @@ def login_form():
 def login():
     """Logs in user."""
 
-    user = User.query.filter_by(email=request.form.get('email')).first()
+    user = User.query.filter_by(username=request.form.get('username')).first()
 
     if user.login(request.form.get('password')):
-        app.logger.info('Login successful... ')
+        app.logger.info(f'User: {user.user_id} logged in successfully!')
         session['user_id'] = user.user_id
     else:
-        app.logger.info('Login failed!')
-        return render_template('login.html')
+        app.logger.info('Username or password is incorrect')
+        flash('Username or password is incorrect, please try again')
+        return render_template('load_user.html')
 
-    return redirect(f'/user/{user.user_id}')
+    flash(f'Welcome back, {user.username}!')
+    return redirect('/user/my-profile')
 
 #     # Get login_form variables
 #     email = request.form["email"]
@@ -187,7 +162,7 @@ def logout():
 
     del session['user_id']
 
-    app.logger.info("User now logged out")
+    app.logger.info("User is now logged out")
     
     flash('You are now logged out')
     return redirect('/')
@@ -207,7 +182,7 @@ def user_detail(user_id):
             num_sightings += 1
             pokemon = Pokemon.query.get(row.pokemon_id)
             # Convert from list to string to avoid Unhashable Type error
-            p_type = " ".join(pokemon.poke_type)
+            p_type = ' '.join(pokemon.poke_type)
             if p_type in type_data:
                 type_data[p_type] += 1
             else:
@@ -217,29 +192,29 @@ def user_detail(user_id):
 
         evaluation = willow_evaluator(user.username, num_sightings)
 
-        # current error: breaking when a user doesn't have any sightings
-
-        return render_template("user_detail.html", 
+        return render_template('user_detail.html', 
                                user=user, 
                                ptypes=ptypes, 
                                type_counts=type_counts, 
                                evaluation=evaluation)
     else:
         evaluation = willow_evaluator(user.username)
-        return render_template("user_detail.html", user=user, evaluation=evaluation)
+        return render_template('user_detail.html', user=user, evaluation=evaluation)
 
-@app.route('/user/myprofile')
+
+@app.route('/user/my-profile')
 @login_required
-def view_profile(user_id):
+def view_profile(username):
     """A user's list of sightings."""
 
-    user = User.query.get_or_404(user_id)
+    user = User.query.get_or_404(username)
 
-    # current error: when user in session, can see other user's life lists
+    # current error: won't load from log-in
     # route change to /myprofile so that get_404 and can't see other user's files
     
     flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
-    return render_template("my_profile.html", user=user)
+    return render_template('my_profile.html', user=user)
+
 
 @app.route('/pokemon')
 def all_pokemon():
@@ -247,7 +222,7 @@ def all_pokemon():
 
     all_mon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
 
-    return render_template("all_pokemon.html", all_mon=all_mon)
+    return render_template('all_pokemon.html', all_mon=all_mon)
 
 
 @app.route('/pokemon/<int:pokemon_id>')
@@ -260,7 +235,7 @@ def pokemon_detail(pokemon_name):
     user_id = session.get('user_id')
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
     all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
-    p_type = " ".join(pokemon.poke_type)
+    p_type = ' '.join(pokemon.poke_type)
 
     seen = 0
     not_seen = 0
@@ -272,7 +247,7 @@ def pokemon_detail(pokemon_name):
             not_seen += 1
     totals = [seen, not_seen]
 
-    return render_template("pokemon_detail.html", pokemon=pokemon, user_id=user_id, totals=totals, p_type=p_type)
+    return render_template('pokemon_detail.html', pokemon=pokemon, user_id=user_id, totals=totals, p_type=p_type)
 
 
 @app.route('/pokemon/<string:pokemon_name>', methods=['POST'])
@@ -287,4 +262,4 @@ def add_sighting(pokemon):
     # current error: TypeError: add_sighting() got an unexpected keyword argument 'pokemon_name'
 
     flash('Professor Willow: Wonderful! Your work is impeccable. Keep up the good work!')
-    return redirect(f"/user/{user_id}", user=user)
+    return redirect(f'/user/{user_id}', user=user)
