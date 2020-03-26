@@ -60,10 +60,22 @@ def test():
     """testing my new bootstrap and charts, delete later"""
 
     user = User.query.get(3)
-    evaluation = willow_evaluator(5, user.username)
+    pokemon = Pokemon.query.filter_by(pokemon_id=102).first_or_404()
+    all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
 
-    # return render_template('pokemon_detail.html', user=user, pokemon='Bulbasaur', users_with=12, users_without=18)
-    return render_template('user_detail.html', user=user, evaluation=evaluation)
+    p_type = " ".join(pokemon.poke_type)
+
+    seen = 0
+    not_seen = 0
+
+    for row in all_sightings:
+        if row.pokemon_id == pokemon.pokemon_id:
+            seen +=1
+        else:
+            not_seen += 1
+    totals = [seen, not_seen]
+
+    return render_template("pokemon_detail.html", pokemon=pokemon, user_id=user.user_id, totals=totals, p_type=p_type)
 
 
 @app.route('/')
@@ -242,13 +254,24 @@ def all_pokemon():
 def pokemon_detail(pokemon_name):
     """Detail page for an individual Pokemon."""
 
+    # if user not logged-in, no add sighting button? or pop up on attempt?
+
     user_id = session.get('user_id')
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
+    all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
+    p_type = " ".join(pokemon.poke_type)
 
-    # if user not logged-in, no add sighting button? or pop up on attempt?
-    # alter type to appear as something other than an array with Jinja
+    seen = 0
+    not_seen = 0
 
-    return render_template("pokemon.html", pokemon=pokemon, user_id=user_id)
+    for row in all_sightings:
+        if row.pokemon_id == pokemon.pokemon_id:
+            seen +=1
+        else:
+            not_seen += 1
+    totals = [seen, not_seen]
+
+    return render_template("pokemon_detail.html", pokemon=pokemon, user_id=user_id, totals=totals, p_type=p_type)
 
 
 @app.route('/pokemon/<string:pokemon_name>', methods=['POST'])
