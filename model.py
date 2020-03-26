@@ -27,6 +27,7 @@ class User(ModelMixin, db.Model):
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(64), unique=True, nullable=False)
+    username = db.Column(db.String(16), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
 
     def __repr__(self):

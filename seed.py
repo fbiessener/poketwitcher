@@ -21,9 +21,11 @@ def load_users():
     for i, person in enumerate(range(0, 30)):
         faker = Faker()
         email = faker.email()
+        username = faker.user_name()
         password = faker.password(length=choice(range(10, 16)), special_chars=False, digits=True, upper_case=True, lower_case=True)
 
         user = User(email=email,
+                    username=username,
                     password=password)
 
         # significantly slows down the db, does work. hash is v long

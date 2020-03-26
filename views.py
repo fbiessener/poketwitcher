@@ -4,8 +4,12 @@ from functools import wraps
 # from datetime import datetime
 
 from model import db, User, Pokemon, Sighting
+from fertilizer import all_types
 
 app = Flask(__name__)
+
+# For Pie Charts
+TYPES = all_types()
 
 def login_required(func):
     @wraps(func)
@@ -27,34 +31,60 @@ def user_free(func):
             return redirect('/')
     return wrapper
 
-def oak_evaluator(num_sightings, username):
+def oak_evaluator(username, num_sightings=0):
     """Returns evaluation of Pokedex/Life List based on number of sightings a user has."""
+
     evaluation = ""
     
     if num_sightings <= 10:
-        evaluation = f'You still have lots to do, {username}. Look for Pok\xc3\xa9mon in grassy areas.'
+        evaluation = f'Professor Oak: You still have lots to do, {username}. Look for Pok\u00E9mon in grassy areas.'
     elif 10 < num_sightings <= 50:
-        evaluation = f'Good {username}, you\'re trying hard!'
+        evaluation = f'Professor Oak: Good {username}, you\'re trying hard!'
     elif 50 < num_sightings <= 100:
-        evaluation = f'You finally got at least 50 species, {username}!'
+        evaluation = f'Professor Oak: You finally got at least 50 species, {username}!'
     elif 100 < num_sightings < 293:
-        evaluation = f'You finally got at least 100 species. I can\'t believe how good you are, {username}!'
+        evaluation = f'Professor Oak: You finally got at least 100 species. I can\'t believe how good you are, {username}!'
     elif 293 <= num_sightings < 440:
-        evaluation = f'Outstanding! You\'ve become a real pro at this, {username}!'
+        evaluation = f'Professor Oak: Outstanding! You\'ve become a real pro at this, {username}!'
     elif 440 <= num_sightings < 586:
-        evaluation = f'I have nothing left to say! You\'re the authority now, {username}!'
+        evaluation = f'Professor Oak: I have nothing left to say! You\'re the authority now, {username}!'
     elif num_sightings == 586:
-        evaluation = f'You\'re Pok\xc3\xa9dex is fully complete! Congratulations, {username}!'
+        evaluation = f'Professor Oak: You\'re Pok\u00E9dex is fully complete! Congratulations, {username}!'
     
     return evaluation
+
 ################################################################################
 
+@app.route('/test')
+def test():
+    """testing my new bootstrap and charts, delete later"""
+
+    user = User.query.get(3)
+    evaluation = oak_evaluator(5, user.username)
+
+    # return render_template('pokemon_detail.html', user=user, pokemon='Bulbasaur', users_with=12, users_without=18)
+    return render_template('user_detail.html', user=user, evaluation=evaluation)
+
+@app.route('/test2')
+def test2():
+    """testing my new bootstrap and charts, delete later"""
+
+    types = []
+    user = User.query.get(1)
+
+    for pokemon in user.sightings:
+        count + 1
+
+    return render_template('user_detail.html', user=user, users_with=12, users_without=18)
+
+
 @app.route('/')
+@app.route('/home')
+@app.route('/index')
 def index():
     """Homepage."""
 
     app.logger.info('Rendering homepage... ')
-    print('Rendering homepage... ')
 
     # different view for logged-in user
     # if session.get('user_id'):
@@ -69,7 +99,6 @@ def register_new_user():
     """Register form."""
 
     app.logger.info('Rendering registration form...')
-    print("Rendering registration form... ")
 
     return render_template("register_form.html")
 
@@ -101,12 +130,11 @@ def login_form():
     """Log-in form."""
 
     app.logger.info("Rendering login form... ")
-    print("Rendering login form... ")
 
     return render_template('login_form.html')
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/user/login', methods=['POST'])
 # @user_free
 def login():
     """Logs in user."""
@@ -152,7 +180,7 @@ def login():
     # return redirect("/user/<user_id>", user=user)
 
 
-@app.route('/logout')
+@app.route('/user/logout')
 @login_required
 def logout():
     """Log out user."""
@@ -160,7 +188,6 @@ def logout():
     del session['user_id']
 
     app.logger.info("User now logged out")
-    print("User logged out")
     
     flash('You are now logged out')
     return redirect('/')
@@ -171,15 +198,39 @@ def user_detail(user_id):
     """A user's list of sightings."""
 
     user = User.query.get_or_404(user_id)
-
-    # current error: when user in session, can see other user's life lists
-    # route change to /myprofile so that get_404 and can't see other user's files
+    num_sightings = 0
+    type_data = {}
     
-    return render_template("user.html", user=user)
+    if user.sightings:
+        # Rendering DB data into forms usable for oak_eval func and pie chart 
+        for row in user.sightings:
+            num_sightings += 1
+            pokemon = Pokemon.query.get(row.pokemon_id)
+            # Convert from list to string to avoid Unhashable Type error
+            p_type = " ".join(pokemon.poke_type)
+            if p_type in type_data:
+                type_data[p_type] += 1
+            else:
+                type_data[p_type] = 1
+        # Unpacking the dictionary into lists for the pie chart to use for labels and data
+        ptypes, type_counts = list(type_data.keys()), list(type_data.values())
+
+        evaluation = oak_evaluator(user.username, num_sightings)
+
+        # current error: breaking when a user doesn't have any sightings
+
+        return render_template("user_detail.html", 
+                               user=user, 
+                               ptypes=ptypes, 
+                               type_counts=type_counts, 
+                               evaluation=evaluation)
+    else:
+        evaluation = oak_evaluator(user.username)
+        return render_template("user_detail.html", user=user, evaluation=evaluation)
 
 @app.route('/user/myprofile')
 @login_required
-def user_detail(user_id):
+def view_profile(user_id):
     """A user's list of sightings."""
 
     user = User.query.get_or_404(user_id)
@@ -188,7 +239,7 @@ def user_detail(user_id):
     # route change to /myprofile so that get_404 and can't see other user's files
     
     flash('Professor Oak: How is your Pokédex coming? Let\'s see…')
-    return render_template("user.html", user=user)
+    return render_template("my_profile.html", user=user)
 
 @app.route('/pokemon')
 def all_pokemon():
