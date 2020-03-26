@@ -65,18 +65,6 @@ def test():
     # return render_template('pokemon_detail.html', user=user, pokemon='Bulbasaur', users_with=12, users_without=18)
     return render_template('user_detail.html', user=user, evaluation=evaluation)
 
-@app.route('/test2')
-def test2():
-    """testing my new bootstrap and charts, delete later"""
-
-    types = []
-    user = User.query.get(1)
-
-    for pokemon in user.sightings:
-        count + 1
-
-    return render_template('user_detail.html', user=user, users_with=12, users_without=18)
-
 
 @app.route('/')
 @app.route('/home')
