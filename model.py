@@ -73,7 +73,7 @@ class Sighting(ModelMixin, db.Model):
     sighting_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     # If I set pokemon_id to unique, will it allow only one of each for the whole db?
-    pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'))
+    pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'), unique=True)
     # How do I timestamp a sighting?
     timestamp = db.Column(db.DateTime(), server_default=db.func.current_timestamp())
     ############################################################
