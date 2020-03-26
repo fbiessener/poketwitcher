@@ -1,0 +1,37 @@
+
+
+
+{%  extends 'base.html' %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <br><div class="card">
+        <div class="card-body">
+          <p>Hello there! Welcome to the world of PokéTwitcher! My name is Willow! People call me the Pokémon Prof! This world is inhabited by creatures called Pokémon! For some people, Pokémon are pets. Other use them for fights. Myself… I study Pokémon as a profession. First, what is your name?</p>
+          <div class="card">
+            <div class="card-body">
+              <input type="submit" name="login" value="Log In">
+              <input type="submit" name="register" value="Register">
+            </div>
+          </div>
+          Your very own Pokémon legend is about to unfold! A world of dreams and adventures with Pokémon awaits! Let's go!
+        </div>
+      </div>
+      <div>
+        <p>Want to take a tour first?</p>
+        <input type="submit" name="pokemon_list" value="View All Pokemon">
+        <input type="submit" name="user_list" value="View All Users">
+      </div>
+    </div>
+    <div class="col">
+      <img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585201204/Professor_fyp1iy.png">
+    </div>
+  </div>
+</div>
+
+{% endblock %}
