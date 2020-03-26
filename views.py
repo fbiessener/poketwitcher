@@ -76,7 +76,7 @@ def index():
 @app.route('/user/load')
 @user_free
 def get_user():
-    """Register form."""
+    """Register/login form."""
 
     app.logger.info('Rendering registration form...')
 
@@ -158,7 +158,7 @@ def login():
 @app.route('/user/logout')
 @login_required
 def logout():
-    """Log out user."""
+    """Logs out user."""
 
     del session['user_id']
 
@@ -205,7 +205,7 @@ def user_detail(user_id):
 @app.route('/user/my-profile')
 @login_required
 def view_profile(username):
-    """A user's list of sightings."""
+    """A logged-in user's list of sightings."""
 
     user = User.query.get_or_404(username)
 
@@ -216,9 +216,31 @@ def view_profile(username):
     return render_template('my_profile.html', user=user)
 
 
-@app.route('/pokemon')
+@app.route('/trainers')
 def all_pokemon():
     """A list of all Pokemon in Pokemon Go."""
+
+    all_users = User.query.order_by(User.user_id).all()
+
+    # dex_totals = []
+
+    # largest sighting_id is the total, how do I find that?
+    # which side does this need to be on?
+    # for user in all_users:
+    #     all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
+    #     user_total = Sighting.query.order_by(Sighting.sighting_id).one()
+
+    #     for row in all_sightings:
+    #         user_total += 1
+    #     dex_totals.append(user_total)
+
+
+    return render_template('all_users.html', all_users=all_users)
+
+
+@app.route('/pokemon')
+def all_trainers():
+    """A list of all users in PokeTwitcher."""
 
     all_mon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
 

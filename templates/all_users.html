@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}All Trainers{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <form action="/pokemon">
+        <div>
+          <h2>All Trainers in PokeTwitcher:</h2>
+          <table class="table table-bordered table-hover table-sm">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Username</th>
+                <th scope="col">Pokédex Completeness</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in all_users %}
+                <tr>
+                  <!-- need an if so if user in session, redirect to my-profile -->
+                  <th scope="row"><a href="/user/{{ user.user_id }}">{{ user.user_id }}</a></th>
+                  <td><a href="/user/{{ user.user_id }}">{{ user.username }}</a></td>
+                  <td><a href="/user/{{ user.user_id }}">15/586 (placeholder)</a></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
