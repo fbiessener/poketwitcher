@@ -250,6 +250,7 @@ def all_pokemon():
     return render_template("all_pokemon.html", all_mon=all_mon)
 
 
+@app.route('/pokemon/<int:pokemon_id>')
 @app.route('/pokemon/<string:pokemon_name>')
 def pokemon_detail(pokemon_name):
     """Detail page for an individual Pokemon."""
@@ -276,13 +277,14 @@ def pokemon_detail(pokemon_name):
 
 @app.route('/pokemon/<string:pokemon_name>', methods=['POST'])
 def add_sighting(pokemon):
-    """Add new sighting to a user's Life List."""
+    """Add new sighting to a user's Pokedex."""
 
     new_sighting = Sighting(user_id=user_id,
                             pokemon_id=pokemon_id)
     new_sighting.save()
 
     # current error: method not allowed for redirect to user_detail
+    # current error: TypeError: add_sighting() got an unexpected keyword argument 'pokemon_name'
 
     flash('Professor Willow: Wonderful! Your work is impeccable. Keep up the good work!')
     return redirect(f"/user/{user_id}", user=user)

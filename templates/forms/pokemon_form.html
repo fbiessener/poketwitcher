@@ -1,0 +1,81 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <div class="page-header">
+            <h2>{{ pokemon.name }}</h2>
+          </div>
+          <div>
+            <form action="/pokemon/{{ pokemon.name }}" method="POST">
+              <div>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th scope="row">ID</th>
+                      <td>{{ pokemon.pokemon_id }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Gender</th>
+                      <td>{{ pokemon.gender }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Type</th>
+                      <td>{{ p_type }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <input class="btn btn-light" type="submit" name="sighting-btn" value="Log A Sighting">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <canvas id="sighting-distribution" width="400" height="400"></canvas>
+          <script>
+            var ctx = document.getElementById('sighting-distribution');
+            var trainer_chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['With', 'Without'],
+                    datasets: [{
+                        data: {{ totals }},
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Percentage of trainers with {{ pokemon.name }} sightings:',
+                        position: 'top'
+                    }
+                }
+            });
+          </script>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <br>
+          <div position="left-align">
+            <a class="btn btn-light" href="/pokemon" role="button" name="pokemon-list-btn">Spotted a different Pokemon? (View All Pokemon)</a>
+          </div>        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
