@@ -4,52 +4,10 @@ from functools import wraps
 # from datetime import datetime
 
 from model import db, User, Pokemon, Sighting
+from utils import *
 
 app = Flask(__name__)
 
-def login_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if 'user_id' in session:
-            return func(*args, **kwargs)
-        else:
-            flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
-            return redirect('/user/load', next=request.url)
-    return wrapper
-
-def user_free(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if 'user_id' not in session:
-            return func(*args, **kwargs)
-        else:
-            flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
-            return redirect('/')
-    return wrapper
-
-def willow_evaluator(username, num_sightings=0):
-    """Returns evaluation of Pokedex/Life List based on number of sightings a user has."""
-
-    evaluation = ""
-    
-    if num_sightings <= 10:
-        evaluation = f'Professor Willow: You still have lots to do, {username}. Look for Pok\u00E9mon in grassy areas.'
-    elif 10 < num_sightings <= 50:
-        evaluation = f'Professor Willow: Good {username}, you\'re trying hard!'
-    elif 50 < num_sightings <= 100:
-        evaluation = f'Professor Willow: You finally got at least 50 species, {username}!'
-    elif 100 < num_sightings < 293:
-        evaluation = f'Professor Willow: You finally got at least 100 species. I can\'t believe how good you are, {username}!'
-    elif 293 <= num_sightings < 440:
-        evaluation = f'Professor Willow: Outstanding! You\'ve become a real pro at this, {username}!'
-    elif 440 <= num_sightings < 586:
-        evaluation = f'Professor Willow: I have nothing left to say! You\'re the authority now, {username}!'
-    elif num_sightings == 586:
-        evaluation = f'Professor Willow: You\'re Pok\u00E9dex is fully complete! Congratulations, {username}!'
-    
-    return evaluation
-
-################################################################################
 
 @app.route('/test')
 def test():
@@ -92,18 +50,13 @@ def add_new_user():
     user_data = request.form
     app.logger.info(f'User data: {user_data}')
 
-    email = request.form.get('email')
-    username = request.form.get('username')
-    password = request.form.get('password')
-
-    new_user = User(email=email, 
-                    username=username, 
-                    password=password)
+    # As long as the form fields exactly match the fields on your User model, this works.
+    new_user = User(**request.form)
     new_user.create_passhash(password)
 
     new_user.save()
 
-    flash(f'New account: {username} registered! You\'re now ready to log in')
+    flash(f'New account: {new_user.username} registered! You\'re now ready to log in')
     return redirect('/user/load')
 
 
@@ -174,33 +127,10 @@ def user_detail(user_id):
 
     user = User.query.get_or_404(user_id)
     
-    num_sightings = 0
-    type_data = {}
-    
-    if user.sightings:
-        # Rendering DB data into forms usable for Willow_eval func and pie chart 
-        for row in user.sightings:
-            num_sightings += 1
-            pokemon = Pokemon.query.get(row.pokemon_id)
-            # Convert from list to string to avoid Unhashable Type error
-            p_type = ' '.join(pokemon.poke_type)
-            if p_type in type_data:
-                type_data[p_type] += 1
-            else:
-                type_data[p_type] = 1
-        # Unpacking the dictionary into lists for the pie chart to use for labels and data
-        ptypes, type_counts = list(type_data.keys()), list(type_data.values())
-
-        evaluation = willow_evaluator(user.username, num_sightings)
-
-        return render_template('user_detail.html', 
-                               user=user, 
-                               ptypes=ptypes, 
-                               type_counts=type_counts, 
-                               evaluation=evaluation)
-    else:
-        evaluation = willow_evaluator(user.username)
-        return render_template('user_detail.html', user=user, evaluation=evaluation)
+    # If the Sightings model is only for sightings,
+    # make the pokemon_id a unique field so you can avoid this.
+    evaluation = willow_evaluator(user.username)
+    return render_template('user_detail.html', user=user, evaluation=evaluation)
 
 
 @app.route('/user/my-profile')
@@ -213,7 +143,8 @@ def view_profile():
 
     num_sightings = 0
     type_data = {}
-    
+
+    # Duplication indicates this section can be placed in its own utility function!
     if user.sightings:
         # Rendering DB data into forms usable for Willow_eval func and pie chart 
         for row in user.sightings:
@@ -246,9 +177,9 @@ def view_profile():
 
 
 @app.route('/trainers')
-def all_pokemon():
-    """A list of all Pokemon in Pokemon Go."""
-
+def all_trainers():
+    """A list of all trainers in Pokemon Go."""
+    # I assume user is trainer
     all_users = User.query.order_by(User.user_id).all()
 
     # dex_totals = []
@@ -268,8 +199,8 @@ def all_pokemon():
 
 
 @app.route('/pokemon')
-def all_trainers():
-    """A list of all users in PokeTwitcher."""
+def all_pokemon():
+    """A list of all pokemon in PokeTwitcher."""
 
     all_mon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
 
@@ -285,20 +216,10 @@ def pokemon_detail(pokemon_name):
 
     user_id = session.get('user_id')
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
-    all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
-    p_type = ' '.join(pokemon.poke_type)
+    all_sightings = pokemon.sightings
+    totals = (len(all_sightings), Pokemon.count())
 
-    seen = 0
-    not_seen = 0
-
-    for row in all_sightings:
-        if row.pokemon_id == pokemon.pokemon_id:
-            seen +=1
-        else:
-            not_seen += 1
-    totals = [seen, not_seen]
-
-    return render_template('pokemon_detail.html', pokemon=pokemon, user_id=user_id, totals=totals, p_type=p_type)
+    return render_template('pokemon_detail.html', pokemon=pokemon, totals=totals)
 
 
 @app.route('/pokemon/<string:pokemon_name>', methods=['POST'])
