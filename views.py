@@ -237,13 +237,12 @@ def view_profile():
                                type_counts=type_counts, 
                                evaluation=evaluation)
 
-    # current error: won't load from log-in
     # route change to /myprofile so that get_404 and can't see other user's files
-    
-    evaluation = willow_evaluator(user.username)
+    else:
+        evaluation = willow_evaluator(user.username)
 
-    flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
-    return render_template('my_profile.html', user=user, evaluation=evaluation)
+        flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
+        return render_template('my_profile.html', user=user, evaluation=evaluation)
 
 
 @app.route('/trainers')
