@@ -302,8 +302,14 @@ def pokemon_detail(pokemon_name):
 
 
 @app.route('/pokemon/<string:pokemon_name>', methods=['POST'])
-def add_sighting(pokemon):
+def add_sighting(pokemon_name):
     """Add new sighting to a user's Pokedex."""
+
+    user_id = session.get('user_id')
+    user = User.query.get_or_404(user_id)
+    
+    pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
+    pokemon_id = pokemon.pokemon_id
 
     new_sighting = Sighting(user_id=user_id,
                             pokemon_id=pokemon_id)
@@ -313,4 +319,4 @@ def add_sighting(pokemon):
     # current error: TypeError: add_sighting() got an unexpected keyword argument 'pokemon_name'
 
     flash('Professor Willow: Wonderful! Your work is impeccable. Keep up the good work!')
-    return redirect(f'/user/{user_id}', user=user)
+    return redirect(f'/user/{user_id}')
