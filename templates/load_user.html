@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Please log in or register a new account{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body" id="register" name="register">
+          <form action="/user/register" method="post" id="register-form">
+            <h7>Haven't registered yet?<br>Make a new account here:</h7>
+            <div>
+              <label for="email">Email: </label>  
+              <input type="text" name="email">
+            </div>
+            <div>
+              <label for="email">Username: </label>  
+              <input type="text" name="username">
+            </div>
+            <div>
+              <label for="password">Password: </label>
+              <input type="password" name="password">
+            </div>
+            <div>
+              <input class="btn btn-light" type="submit" name="register-btn" value="Submit">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-body" id="login" name="login">
+          <form action="/user/login" method="post" id="login-form">
+            <h7>Already have an account? Log in here:</h7>
+            <input type="hidden" name="next" value="{{ request.args.get('next', '') }}" />
+            <div>
+              <label for="username">Username: </label>  
+              <input type="text" name="username">
+            </div>
+            <div>
+              <label for="password">Password: </label>
+              <input type="password" name="password">
+            </div>
+            <div>
+              <input class="btn btn-light" type="submit" name="login-btn" value="Submit">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
