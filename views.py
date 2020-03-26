@@ -173,6 +173,7 @@ def user_detail(user_id):
     """A user's list of sightings."""
 
     user = User.query.get_or_404(user_id)
+    
     num_sightings = 0
     type_data = {}
     
@@ -204,16 +205,45 @@ def user_detail(user_id):
 
 @app.route('/user/my-profile')
 @login_required
-def view_profile(username):
+def view_profile():
     """A logged-in user's list of sightings."""
 
-    user = User.query.get_or_404(username)
+    user_id = session.get('user_id')
+    user = User.query.get_or_404(user_id)
+
+    num_sightings = 0
+    type_data = {}
+    
+    if user.sightings:
+        # Rendering DB data into forms usable for Willow_eval func and pie chart 
+        for row in user.sightings:
+            num_sightings += 1
+            pokemon = Pokemon.query.get(row.pokemon_id)
+            # Convert from list to string to avoid Unhashable Type error
+            p_type = ' '.join(pokemon.poke_type)
+            if p_type in type_data:
+                type_data[p_type] += 1
+            else:
+                type_data[p_type] = 1
+        # Unpacking the dictionary into lists for the pie chart to use for labels and data
+        ptypes, type_counts = list(type_data.keys()), list(type_data.values())
+
+        evaluation = willow_evaluator(user.username, num_sightings)
+
+        flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
+        return render_template('user_detail.html', 
+                               user=user, 
+                               ptypes=ptypes, 
+                               type_counts=type_counts, 
+                               evaluation=evaluation)
 
     # current error: won't load from log-in
     # route change to /myprofile so that get_404 and can't see other user's files
     
+    evaluation = willow_evaluator(user.username)
+
     flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
-    return render_template('my_profile.html', user=user)
+    return render_template('my_profile.html', user=user, evaluation=evaluation)
 
 
 @app.route('/trainers')
@@ -247,7 +277,7 @@ def all_trainers():
     return render_template('all_pokemon.html', all_mon=all_mon)
 
 
-@app.route('/pokemon/<int:pokemon_id>')
+# @app.route('/pokemon/<int:pokemon_id>')
 @app.route('/pokemon/<string:pokemon_name>')
 def pokemon_detail(pokemon_name):
     """Detail page for an individual Pokemon."""
