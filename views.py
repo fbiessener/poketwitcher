@@ -17,7 +17,7 @@ def login_required(func):
         if 'user_id' in session:
             return func(*args, **kwargs)
         else:
-            flash('Professor Oaks words rang out. \"There\'s a time and a place for everything. But not now!\"')
+            flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
             return redirect('/login')
     return wrapper
 
@@ -27,29 +27,29 @@ def user_free(func):
         if 'user_id' not in session:
             return func(*args, **kwargs)
         else:
-            flash('Professor Oaks words rang out. \"There\'s a time and a place for everything. But not now!\"')
+            flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
             return redirect('/')
     return wrapper
 
-def oak_evaluator(username, num_sightings=0):
+def willow_evaluator(username, num_sightings=0):
     """Returns evaluation of Pokedex/Life List based on number of sightings a user has."""
 
     evaluation = ""
     
     if num_sightings <= 10:
-        evaluation = f'Professor Oak: You still have lots to do, {username}. Look for Pok\u00E9mon in grassy areas.'
+        evaluation = f'Professor Willow: You still have lots to do, {username}. Look for Pok\u00E9mon in grassy areas.'
     elif 10 < num_sightings <= 50:
-        evaluation = f'Professor Oak: Good {username}, you\'re trying hard!'
+        evaluation = f'Professor Willow: Good {username}, you\'re trying hard!'
     elif 50 < num_sightings <= 100:
-        evaluation = f'Professor Oak: You finally got at least 50 species, {username}!'
+        evaluation = f'Professor Willow: You finally got at least 50 species, {username}!'
     elif 100 < num_sightings < 293:
-        evaluation = f'Professor Oak: You finally got at least 100 species. I can\'t believe how good you are, {username}!'
+        evaluation = f'Professor Willow: You finally got at least 100 species. I can\'t believe how good you are, {username}!'
     elif 293 <= num_sightings < 440:
-        evaluation = f'Professor Oak: Outstanding! You\'ve become a real pro at this, {username}!'
+        evaluation = f'Professor Willow: Outstanding! You\'ve become a real pro at this, {username}!'
     elif 440 <= num_sightings < 586:
-        evaluation = f'Professor Oak: I have nothing left to say! You\'re the authority now, {username}!'
+        evaluation = f'Professor Willow: I have nothing left to say! You\'re the authority now, {username}!'
     elif num_sightings == 586:
-        evaluation = f'Professor Oak: You\'re Pok\u00E9dex is fully complete! Congratulations, {username}!'
+        evaluation = f'Professor Willow: You\'re Pok\u00E9dex is fully complete! Congratulations, {username}!'
     
     return evaluation
 
@@ -60,7 +60,7 @@ def test():
     """testing my new bootstrap and charts, delete later"""
 
     user = User.query.get(3)
-    evaluation = oak_evaluator(5, user.username)
+    evaluation = willow_evaluator(5, user.username)
 
     # return render_template('pokemon_detail.html', user=user, pokemon='Bulbasaur', users_with=12, users_without=18)
     return render_template('user_detail.html', user=user, evaluation=evaluation)
@@ -202,7 +202,7 @@ def user_detail(user_id):
     type_data = {}
     
     if user.sightings:
-        # Rendering DB data into forms usable for oak_eval func and pie chart 
+        # Rendering DB data into forms usable for Willow_eval func and pie chart 
         for row in user.sightings:
             num_sightings += 1
             pokemon = Pokemon.query.get(row.pokemon_id)
@@ -215,7 +215,7 @@ def user_detail(user_id):
         # Unpacking the dictionary into lists for the pie chart to use for labels and data
         ptypes, type_counts = list(type_data.keys()), list(type_data.values())
 
-        evaluation = oak_evaluator(user.username, num_sightings)
+        evaluation = willow_evaluator(user.username, num_sightings)
 
         # current error: breaking when a user doesn't have any sightings
 
@@ -225,7 +225,7 @@ def user_detail(user_id):
                                type_counts=type_counts, 
                                evaluation=evaluation)
     else:
-        evaluation = oak_evaluator(user.username)
+        evaluation = willow_evaluator(user.username)
         return render_template("user_detail.html", user=user, evaluation=evaluation)
 
 @app.route('/user/myprofile')
@@ -238,7 +238,7 @@ def view_profile(user_id):
     # current error: when user in session, can see other user's life lists
     # route change to /myprofile so that get_404 and can't see other user's files
     
-    flash('Professor Oak: How is your Pokédex coming? Let\'s see…')
+    flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
     return render_template("my_profile.html", user=user)
 
 @app.route('/pokemon')
@@ -273,5 +273,5 @@ def add_sighting(pokemon):
 
     # current error: method not allowed for redirect to user_detail
 
-    flash('Professor Oak: Wonderful! Your work is impeccable. Keep up the good work!')
+    flash('Professor Willow: Wonderful! Your work is impeccable. Keep up the good work!')
     return redirect(f"/user/{user_id}", user=user)
