@@ -54,11 +54,13 @@ def load_pokemon():
         name = poke_dict[key].get('name')
         gender = genderizer(pokemon_id)
         poke_type = poke_typer(pokemon_id)
+        ditto_chance = possibly_ditto(pokemon_id)
 
         pokemon = Pokemon(pokemon_id=pokemon_id, 
                           name=name,
                           gender=gender,
-                          poke_type=poke_type)
+                          poke_type=poke_type,
+                          ditto_chance=ditto_chance)
         
         # Add to session and commit
         pokemon.save()

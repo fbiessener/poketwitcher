@@ -1,11 +1,6 @@
-"""Helper functions for seed.py."""
-import json
+"""Helper functions for seed."""
 
-""" TODO:
-* alolan is a normal read, but ids are the same
-* isDitto should be a randomized chance when clicking the sighting button
-* 
-"""
+import json
 
 def json_reader(file_path):
     """Converts json files into Python dictionaries."""
@@ -109,6 +104,20 @@ def poke_typer(poke_id):
     types = type_normalizer()
 
     return types.get(poke_id)
+
+def possibly_ditto(poke_id):
+    """Checks whether a Pokemon has a chance of being Ditto instead, returns Boolean."""
+
+    ditto_json = '/home/vagrant/src/projects/app/static/seed_data/ditto.json'
+    ditto_dict = json_reader(ditto_json)
+
+    chance = False
+    poke_id = str(poke_id)
+
+    if poke_id in ditto_dict:
+        chance = True
+
+    return chance
 
 # def all_types():
 #     """All possible Pokemon types from DB."""

@@ -3,6 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+import random
 
 db = SQLAlchemy()
 
@@ -27,7 +28,7 @@ class User(ModelMixin, db.Model):
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(64), unique=True, nullable=False)
-    username = db.Column(db.String(16), unique=True, nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
 
     def __repr__(self):
@@ -52,9 +53,18 @@ class Pokemon(ModelMixin, db.Model):
     gender = db.Column(db.String(3), nullable=False)
     # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
     poke_type = db.Column(db.ARRAY(db.String()), nullable=False)
-    # isDitto = db.Column(db.Boolean(), nullable=False)
+    ditto_chance = db.Column(db.Boolean(), nullable=False)
     # img store as url
     # img = db.Column(db.String)
+
+    def chance_of_ditto(self):
+        """Select Pokemon have a 16% chance of being Ditto instead."""
+
+        if self.ditto_chance == True:
+            # random() returns random floating point number in range [0.0, 1.0)
+            if random.random() < 0.16:
+                return True
+
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -69,11 +79,10 @@ class Sighting(ModelMixin, db.Model):
 
     sighting_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    # If I set pokemon_id to unique, will it allow only one of each for the whole db?
     pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'))
     timestamp = db.Column(db.DateTime(), server_default=db.func.current_timestamp())
     ############################################################
-    # How do I convert lat and long into a string for this? ###
+    # Possibly future maps API implementation
     # location = db.Column(db.String(200))
 
     # Define relationships to user and pokemon
@@ -141,7 +150,7 @@ def connect_to_db(app, db_url="postgresql:///poketwitcher"):
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///poketwitcher'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_ECHO'] = True
+    app.config['SQLALCHEMY_ECHO'] = False
     db.app = app
     db.init_app(app)
 
