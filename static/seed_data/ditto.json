@@ -1,0 +1,62 @@
+{
+    "13": {
+        "id": 13, 
+        "name": "Weedle"
+    }, 
+    "46": {
+        "id": 46, 
+        "name": "Paras"
+    }, 
+    "48": {
+        "id": 48, 
+        "name": "Venonat"
+    }, 
+    "163": {
+        "id": 163, 
+        "name": "Hoothoot"
+    }, 
+    "165": {
+        "id": 165, 
+        "name": "Ledyba"
+    }, 
+    "167": {
+        "id": 167, 
+        "name": "Spinarak"
+    }, 
+    "187": {
+        "id": 187, 
+        "name": "Hoppip"
+    }, 
+    "223": {
+        "id": 223, 
+        "name": "Remoraid"
+    }, 
+    "273": {
+        "id": 273, 
+        "name": "Seedot"
+    }, 
+    "293": {
+        "id": 293, 
+        "name": "Whismur"
+    }, 
+    "300": {
+        "id": 300, 
+        "name": "Skitty"
+    }, 
+    "316": {
+        "id": 316, 
+        "name": "Gulpin"
+    }, 
+    "322": {
+        "id": 322, 
+        "name": "Numel"
+    }, 
+    "399": {
+        "id": 399, 
+        "name": "Bidoof"
+    }, 
+    "543": {
+        "id": 543, 
+        "name": "Venipede"
+    }
+}
