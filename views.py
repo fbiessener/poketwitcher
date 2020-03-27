@@ -1,5 +1,5 @@
 # its dangerous? click?
-from flask import Flask, render_template, redirect, request, session, flash
+from flask import Flask, render_template, redirect, request, session, flash, jsonify
 
 from model import db, User, Pokemon, Sighting
 from utils import *
@@ -270,18 +270,31 @@ def add_sighting(pokemon_name):
 #     return
 
 
-# @app.route('/search', methods=['POST'])
-# def search():
-#     """Search."""
+@app.route('/search.json')
+def search():
+    """Return a user or Pokemon dictionary for this search query."""
 
-#     result = request.form
-    
-#     if Pokemon.query.filter_by(name=result).one_or_none():
-#         return render_template(f'/pokemon/{result}')
-#     # elif User.query.filter_by(name=result).one_or_none():
-#     #     user_id = 
-#     #     return redirect(f'/user/{user_id}')
-#     else:
-#         flash('Your search did not return any results, please try again.')
-#         return
+    # current error:
+    # redirect: http://0.0.0.0:5000/search.json?search=Pikachu
+    # output: {
+    #            "gender": "F/M", 
+    #            "img": "https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png.png", 
+    #            "name": "Pikachu", 
+    #            "poke_type": [
+    #              "Electric"
+    #            ], 
+    #            "pokemon_id": 25
+    #         }
 
+    result = request.args.get('search')
+    pokemon = Pokemon.query.filter_by(name=result).one_or_none()
+    user = User.query.filter_by(username=result).one_or_none()
+
+    if pokemon is not None:
+        result = jsonify(pokemon.as_dict())
+    elif user is not None:
+        result = jsonify(user.as_dict())
+    else:
+        result = f'{result} did not return any results, please try again.'
+
+    return result
