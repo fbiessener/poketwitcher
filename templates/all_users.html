@@ -6,7 +6,7 @@
 
 <script>
 $(document).ready(function(){
-  $("#table-search").on("keyup", function() {
+  $("#filter-search").on("keyup", function() {
     var value = $(this).val().toLowerCase();
     $("#all-users-table tr").filter(function() {
       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
@@ -25,7 +25,7 @@ $(document).ready(function(){
       <form action="/pokemon">
         <div>
           <h2>All PokéTwitcher Users:</h2>
-          {% include '/forms/table_search_form.html' %}
+          {% include '/forms/filter_form.html' %}
           <table class="table table-bordered table-hover table-sm">
             <thead class="thead-dark">
               <tr>
