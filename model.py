@@ -31,16 +31,19 @@ class User(ModelMixin, db.Model):
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
 
-    def __repr__(self):
-        """Provide helpful representation when printed."""
-
-        return f"<User id={self.user_id} email={self.email}>"
-
     def create_passhash(self, password):
         self.password = generate_password_hash(password)
 
     def login(self, password):
         return check_password_hash(self.password, password)
+
+    def as_dict(self):
+        return {'user_id': self.user_id, 'username': self.username}
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return f"<User id={self.user_id} email={self.email}>"
 
 
 class Pokemon(ModelMixin, db.Model):
@@ -65,6 +68,12 @@ class Pokemon(ModelMixin, db.Model):
             if random.random() < 0.16:
                 return True
 
+    def as_dict(self):
+        return {'pokemon_id': self.pokemon_id, 
+                'name': self.name,
+                'gender': self.gender,
+                'poke_type': self.poke_type,
+                'img': self.img}
 
     def __repr__(self):
         """Provide helpful representation when printed."""
