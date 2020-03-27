@@ -21,6 +21,7 @@
                   <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Name</th>
+                    <th scope="col">Timestamp</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -28,6 +29,7 @@
                     <tr>
                       <th scope="row"><a href="/pokemon/{{ sighting.pokemon.name }}">{{ sighting.pokemon_id }}</a></th>
                       <td><a href="/pokemon/{{ sighting.pokemon.name }}">{{ sighting.pokemon.name }}</a></td>
+                      <td><a href="/pokemon/{{ sighting.pokemon.name }}">{{ sighting.timestamp }}</a></td>
                     </tr>
                   {% endfor %}
                 </tbody>
