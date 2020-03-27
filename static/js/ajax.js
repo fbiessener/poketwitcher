@@ -4,16 +4,16 @@
 
 function replaceSearchResults(res) {
     $("#search-info").html(res);
-    console.log(res='Missing?');
+    console.log(res);
 }
 
 function showSearchResults(evt) {
     evt.preventDefault();
 
     let url = "/search.json";
-    let formData = {"Results": $("#search-field").val()};
+    let formData = {"results": $("#search-field").val()};
 
-    $.get(url, formData, replaceSearchResults);
+    $.get(url, formData, replaceSearchResults(formData.results));
 }
 
 $("#search-form").on('submit', showSearchResults);
