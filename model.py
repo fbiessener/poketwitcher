@@ -49,12 +49,9 @@ class Pokemon(ModelMixin, db.Model):
 
     pokemon_id = db.Column(db.Integer, autoincrement=False, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    #############################################################
-    # shiny = db.Column(db.Boolean(), nullable=False)
-    gender = db.Column(db.String(3))
+    gender = db.Column(db.String(3), nullable=False)
     # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
     poke_type = db.Column(db.ARRAY(db.String()), nullable=False)
-    # alolan = db.Column(db.Boolean(), nullable=False)
     # isDitto = db.Column(db.Boolean(), nullable=False)
     # img store as url
     # img = db.Column(db.String)
@@ -74,7 +71,6 @@ class Sighting(ModelMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     # If I set pokemon_id to unique, will it allow only one of each for the whole db?
     pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'))
-    # How do I timestamp a sighting?
     timestamp = db.Column(db.DateTime(), server_default=db.func.current_timestamp())
     ############################################################
     # How do I convert lat and long into a string for this? ###
@@ -145,6 +141,7 @@ def connect_to_db(app, db_url="postgresql:///poketwitcher"):
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///poketwitcher'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ECHO'] = True
     db.app = app
     db.init_app(app)
 
