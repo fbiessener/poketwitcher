@@ -121,6 +121,9 @@ def user_detail(user_id):
     """A user's list of sightings."""
 
     user = User.query.get_or_404(user_id)
+
+    if session.get('user_id') and (user.user_id == session.get('user_id')):
+        return redirect('/user/my-profile')
     
     num_sightings = 0
     type_data = {}

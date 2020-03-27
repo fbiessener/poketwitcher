@@ -12,9 +12,9 @@
     <div class="col">
       <form action="/pokemon">
         <div>
-          <h2>All Trainers in PokeTwitcher:</h2>
+          <h2>All PokéTwitcher Trainers:</h2>
           <table class="table table-bordered table-hover table-sm">
-            <thead>
+            <thead class="thead-dark">
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Username</th>
@@ -24,10 +24,9 @@
             <tbody>
               {% for user in all_users %}
                 <tr>
-                  <!-- need an if so if user in session, redirect to my-profile -->
                   <th scope="row"><a href="/user/{{ user.user_id }}">{{ user.user_id }}</a></th>
                   <td><a href="/user/{{ user.user_id }}">{{ user.username }}</a></td>
-                  <td><a href="/user/{{ user.user_id }}">15/586 (placeholder)</a></td>
+                  <td><a href="/user/{{ user.user_id }}">{{ dex_totals.get(user.user_id) }}</a></td>
                 </tr>
               {% endfor %}
             </tbody>
