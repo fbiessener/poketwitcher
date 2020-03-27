@@ -1,8 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}All Trainers{% endblock %}
+{% block title %}All Users{% endblock %}
 
 {% block head %}
+
+<script>
+$(document).ready(function(){
+  $("#table-search").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#all-users-table tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+
 {% endblock %}
 
 {% block content %}
@@ -12,7 +24,8 @@
     <div class="col">
       <form action="/pokemon">
         <div>
-          <h2>All PokéTwitcher Trainers:</h2>
+          <h2>All PokéTwitcher Users:</h2>
+          {% include '/forms/table_search_form.html' %}
           <table class="table table-bordered table-hover table-sm">
             <thead class="thead-dark">
               <tr>
@@ -21,7 +34,7 @@
                 <th scope="col">Pokédex Completeness</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="all-users-table">
               {% for user in all_users %}
                 <tr>
                   <th scope="row"><a href="/user/{{ user.user_id }}">{{ user.user_id }}</a></th>

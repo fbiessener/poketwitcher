@@ -6,6 +6,26 @@ from utils import *
 
 app = Flask(__name__)
 
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     # note that we set the 404 status explicitly
+#     return render_template('404.html'), 404
+
+
+@app.route('/test')
+def test():
+    """Test"""
+
+    user = User.query.get(3)
+    # AttributeError: 'InstrumentedList' object has no attribute 'distinct'
+    # test = user.sightings.distinct(Pokemon.pokemon_id)
+    
+    # this finds distinct sightings, how do I use it?
+    # test = Sighting.query.filter_by(user_id=user.user_id).distinct()
+    # print(test)
+    return render_template('test.html')
+
+
 @app.route('/')
 def index():
     """Homepage."""
@@ -38,19 +58,13 @@ def add_new_user():
     user_data = request.form
     app.logger.info(f'User data: {user_data}')
 
-    email = request.form.get('email')
-    username = request.form.get('username')
     password = request.form.get('password')
 
-    new_user = User(email=email, 
-                    username=username, 
-                    password=password)
-
-    # new_user = User(**request.form)
+    new_user = User(**request.form)
     new_user.create_passhash(password)
     new_user.save()
 
-    flash(f'New account: {username} registered! You\'re now ready to log in')
+    flash(f'New account: {new_user.username} registered! You\'re now ready to log in')
     return redirect('/user/load')
 
 
@@ -59,6 +73,7 @@ def add_new_user():
 def login():
     """Logs in user."""
 
+    # test with first or 404
     user = User.query.filter_by(username=request.form.get('username')).first()
 
     if user.login(request.form.get('password')):
@@ -71,35 +86,6 @@ def login():
 
     flash(f'Welcome back, {user.username}!')
     return redirect('/user/my-profile')
-
-#     # Get login_form variables
-#     email = request.form["email"]
-#     password = request.form["password"]
-
-#     # is this doing what i think it's doing?
-#     user = User.query.filter_by(email=email).first()
-
-#     if not user:
-#         flash("No such user with {email}")
-#         # app.logger.info("No such user with {email}")
-#         print("No such user with {email}")
-#         return redirect("/login")
-
-#     if not user.login(password):
-#         flash("Incorrect password")
-#         # app.logger.info("Incorrect password")
-#         print("Incorrect password")
-#         return redirect("/login")
-
-    # # Add user_id to session for conditional view of templates
-    # session["user_id"] = user.user_id
-    
-    # flash("Logged in successfully!")
-    # app.logger.info("User: {user_id} logged in successfully!")
-    # print("User {user_id} logged in successfully!")
-
-    # # return redirect(f"/user/{user.user_id}")
-    # return redirect("/user/<user_id>", user=user)
 
 
 @app.route('/logout')
@@ -204,30 +190,24 @@ def all_users():
 
     total_pokemon = 586
     user_total_sightings = 0
-    pokedex_eval = ''
-    # dict of user_id int keys and string values?
     dex_totals = {}
 
-    # largest sighting_id is the total, how do I find that?
-    # which side does this need to be on?
     for user in all_users:
-        user_total_sightings = Sighting.query.filter(Sighting.user_id == user.user_id).count()
-        pokedex_eval = f'{user_total_sightings}/{total_pokemon}'
-        dex_totals[User.user_id] = pokedex_eval
+        user_total_sightings = Sighting.query.filter_by(user_id=user.user_id).count()
+        dex_totals[user.user_id] = f'{user_total_sightings}/{total_pokemon}'
 
     return render_template('all_users.html', all_users=all_users, dex_totals=dex_totals)
 
 
 @app.route('/pokemon')
 def all_pokemon():
-    """A list of all users in PokeTwitcher."""
+    """A list of all users of PokeTwitcher."""
 
     all_mon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
 
     return render_template('all_pokemon.html', all_mon=all_mon)
 
 
-# @app.route('/pokemon/<int:pokemon_id>')
 @app.route('/pokemon/<string:pokemon_name>')
 def pokemon_detail(pokemon_name):
     """Detail page for an individual Pokemon."""
@@ -236,6 +216,8 @@ def pokemon_detail(pokemon_name):
 
     user_id = session.get('user_id')
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
+    # TypeError: object of type 'InstrumentedAttribute' has no len()
+    # for kay
     all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
     p_type = ' '.join(pokemon.poke_type)
 
@@ -277,8 +259,29 @@ def add_sighting(pokemon_name):
                                 pokemon_id=pokemon_id)
         new_sighting.save()
 
-    # current error: method not allowed for redirect to user_detail
-    # current error: TypeError: add_sighting() got an unexpected keyword argument 'pokemon_name'
-
     flash('Professor Willow: Wonderful! Your work is impeccable. Keep up the good work!')
     return redirect(f'/user/{user_id}')
+
+
+# @app.route('/search')
+# def search_form():
+#     """Search."""
+
+#     return
+
+
+# @app.route('/search', methods=['POST'])
+# def search():
+#     """Search."""
+
+#     result = request.form
+    
+#     if Pokemon.query.filter_by(name=result).one_or_none():
+#         return render_template(f'/pokemon/{result}')
+#     # elif User.query.filter_by(name=result).one_or_none():
+#     #     user_id = 
+#     #     return redirect(f'/user/{user_id}')
+#     else:
+#         flash('Your search did not return any results, please try again.')
+#         return
+

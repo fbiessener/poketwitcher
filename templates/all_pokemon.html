@@ -1,30 +1,43 @@
 {% extends 'base.html' %}
 
-{% block title %}All Pokémon{% endblock %}
+{% block title %}Gotta spot them all!{% endblock %}
 
 {% block head %}
+
+<script>
+$(document).ready(function(){
+  $("#table-search").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#all-pokemon-table tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+
 {% endblock %}
 
 {% block content %}
-
-{% include 'forms/search_form.html' %}
 
 <div class="container-fluid">
   <div class="row">
     <div class="col">
       <form action="/pokemon">
         <div>
-          <h2>All Pokemon in Pokemon Go:</h2>
+          <h2>All Pokémon in Pokémon Go:</h2>
+          {% include '/forms/table_search_form.html' %}
           <table class="table table-bordered table-hover table-sm">
-            <thead>
+            <thead class="thead-dark">
               <tr>
+                <th scope="col">Image</th>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="all-pokemon-table">
               {% for pokemon in all_mon %}
                 <tr>
+                  <th scope="row"><a href="/pokemon/{{ pokemon.name }}"><img src="{{ pokemon.img }}"></a></th>
                   <th scope="row"><a href="/pokemon/{{ pokemon.name }}">{{ pokemon.pokemon_id }}</a></th>
                   <td><a href="/pokemon/{{ pokemon.name }}">{{ pokemon.name }}</a></td>
                 </tr>

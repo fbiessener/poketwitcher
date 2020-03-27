@@ -1,25 +1,33 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="/">PokeTwitcher</a>
+  <a class="navbar-brand" href="/">PokéTwitcher</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-<!-- View Register/Log in/Log Out appropriate times not on homepage -->
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      {% if session.get('user_id') %}
+        <li class="nav-item active">
+          <a class="nav-link" href="/user/my-profile">My Profile <span class="sr-only">(my profile)</span></a>
+        </li>
+      {% else %}
+        <li class="nav-item active">
+          <a class="nav-link" href="/user/load">Register/Log In <span class="sr-only">(register or log in)</span></a>
+        </li>
+      {% endif %}
+      <li class="nav-item">
+        <a class="nav-link" href="/pokemon">Pokémon (all)<span class="sr-only">(all pokemon)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/register">New User?</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/login">Returning Users</a>
+        <a class="nav-link" href="/user/all">Users<span class="sr-only">(all users)</span></a>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <!-- only on all-pokemon -->
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
+    {% if session.get('user_id') %}
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/user/logout">Log Out <span class="sr-only">(my profile)</span></a>
+        </li>
+      </ul>
+    {% endif %}
+    <!-- include '/forms/search_form.html' -->
   </div>
 </nav>
