@@ -14,6 +14,7 @@ def login_required(func):
             return func(*args, **kwargs)
         else:
             flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
+            # url_for() ? needs to test
             return redirect('/user/load', next=request.url)
     return wrapper
 
@@ -251,6 +252,7 @@ def all_pokemon():
 
     all_users = User.query.order_by(User.user_id).all()
 
+    # dex totals is a list of strings 'blank/586'
     # dex_totals = []
 
     # largest sighting_id is the total, how do I find that?
@@ -289,13 +291,12 @@ def pokemon_detail(pokemon_name):
     p_type = ' '.join(pokemon.poke_type)
 
     seen = 0
-    not_seen = 0
+    user_count = User.query.count()
 
     for row in all_sightings:
         if row.pokemon_id == pokemon.pokemon_id:
             seen +=1
-        else:
-            not_seen += 1
+    not_seen = user_count - seen
     totals = [seen, not_seen]
 
     return render_template('pokemon_detail.html', pokemon=pokemon, user_id=user_id, totals=totals, p_type=p_type)
@@ -303,7 +304,7 @@ def pokemon_detail(pokemon_name):
 
 @app.route('/pokemon/<string:pokemon_name>', methods=['POST'])
 def add_sighting(pokemon_name):
-    """Add new sighting to a user's Pokedex."""
+    """Add new sighting to a user's Pokédex."""
 
     user_id = session.get('user_id')
     user = User.query.get_or_404(user_id)
@@ -311,9 +312,12 @@ def add_sighting(pokemon_name):
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
     pokemon_id = pokemon.pokemon_id
 
-    new_sighting = Sighting(user_id=user_id,
-                            pokemon_id=pokemon_id)
-    new_sighting.save()
+    user_sighting = Sighting.query.filter((Sighting.user_id == user_id) & (Sighting.pokemon_id == pokemon_id)).one_or_none()
+    
+    if user_sighting is None:
+        new_sighting = Sighting(user_id=user_id,
+                                pokemon_id=pokemon_id)
+        new_sighting.save()
 
     # current error: method not allowed for redirect to user_detail
     # current error: TypeError: add_sighting() got an unexpected keyword argument 'pokemon_name'
