@@ -49,18 +49,20 @@ def load_pokemon():
     poke_dict = json_reader(all_pogo_json)
 
     for i, key in enumerate(poke_dict):
-    # for i, key in enumerate(gender_dict):
         pokemon_id = poke_dict[key].get('id')
         name = poke_dict[key].get('name')
         gender = genderizer(pokemon_id)
         poke_type = poke_typer(pokemon_id)
         ditto_chance = possibly_ditto(pokemon_id)
+        # store as 0.png?
+        img = 'https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png.png'
 
         pokemon = Pokemon(pokemon_id=pokemon_id, 
                           name=name,
                           gender=gender,
                           poke_type=poke_type,
-                          ditto_chance=ditto_chance)
+                          ditto_chance=ditto_chance,
+                          img=img)
         
         # Add to session and commit
         pokemon.save()

@@ -55,7 +55,7 @@ class Pokemon(ModelMixin, db.Model):
     poke_type = db.Column(db.ARRAY(db.String()), nullable=False)
     ditto_chance = db.Column(db.Boolean(), nullable=False)
     # img store as url
-    # img = db.Column(db.String)
+    img = db.Column(db.String)
 
     def chance_of_ditto(self):
         """Select Pokemon have a 16% chance of being Ditto instead."""
