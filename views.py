@@ -1,67 +1,12 @@
 # its dangerous? click?
 from flask import Flask, render_template, redirect, request, session, flash
-from functools import wraps
-# from datetime import datetime
 
 from model import db, User, Pokemon, Sighting
+from utils import *
 
 app = Flask(__name__)
 
-def login_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if 'user_id' in session:
-            return func(*args, **kwargs)
-        else:
-            flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
-            # url_for() ? needs to test
-            return redirect('/user/load', next=request.url)
-    return wrapper
-
-def user_free(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if 'user_id' not in session:
-            return func(*args, **kwargs)
-        else:
-            flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
-            return redirect('/')
-    return wrapper
-
-def willow_evaluator(username, num_sightings=0):
-    """Returns evaluation of Pokedex/Life List based on number of sightings a user has."""
-
-    evaluation = ""
-    
-    if num_sightings <= 10:
-        evaluation = f'Professor Willow: You still have lots to do, {username}. Look for Pok\u00E9mon in grassy areas.'
-    elif 10 < num_sightings <= 50:
-        evaluation = f'Professor Willow: Good {username}, you\'re trying hard!'
-    elif 50 < num_sightings <= 100:
-        evaluation = f'Professor Willow: You finally got at least 50 species, {username}!'
-    elif 100 < num_sightings < 293:
-        evaluation = f'Professor Willow: You finally got at least 100 species. I can\'t believe how good you are, {username}!'
-    elif 293 <= num_sightings < 440:
-        evaluation = f'Professor Willow: Outstanding! You\'ve become a real pro at this, {username}!'
-    elif 440 <= num_sightings < 586:
-        evaluation = f'Professor Willow: I have nothing left to say! You\'re the authority now, {username}!'
-    elif num_sightings == 586:
-        evaluation = f'Professor Willow: You\'re Pok\u00E9dex is fully complete! Congratulations, {username}!'
-    
-    return evaluation
-
-################################################################################
-
-@app.route('/test')
-def test():
-    """testing my new bootstrap and charts, delete later"""
-
-    return render_template('load_user.html')
-
-
 @app.route('/')
-@app.route('/home')
-@app.route('/index')
 def index():
     """Homepage."""
 
@@ -79,7 +24,7 @@ def index():
 def get_user():
     """Register/login form."""
 
-    app.logger.info('Rendering registration form...')
+    app.logger.info('Rendering registration and login forms...')
 
     return render_template('load_user.html')
 
@@ -100,8 +45,9 @@ def add_new_user():
     new_user = User(email=email, 
                     username=username, 
                     password=password)
-    new_user.create_passhash(password)
 
+    # new_user = User(**request.form)
+    new_user.create_passhash(password)
     new_user.save()
 
     flash(f'New account: {username} registered! You\'re now ready to log in')
@@ -156,6 +102,7 @@ def login():
     # return redirect("/user/<user_id>", user=user)
 
 
+@app.route('/logout')
 @app.route('/user/logout')
 @login_required
 def logout():
@@ -165,7 +112,7 @@ def logout():
 
     app.logger.info("User is now logged out")
     
-    flash('You are now logged out')
+    flash('successfully logged out!')
     return redirect('/')
 
 
@@ -246,31 +193,30 @@ def view_profile():
         return render_template('my_profile.html', user=user, evaluation=evaluation)
 
 
-@app.route('/trainers')
-def all_pokemon():
+@app.route('/user/all')
+def all_users():
     """A list of all Pokemon in Pokemon Go."""
 
     all_users = User.query.order_by(User.user_id).all()
 
-    # dex totals is a list of strings 'blank/586'
-    # dex_totals = []
+    total_pokemon = 586
+    user_total_sightings = 0
+    pokedex_eval = ''
+    # dict of user_id int keys and string values?
+    dex_totals = {}
 
     # largest sighting_id is the total, how do I find that?
     # which side does this need to be on?
-    # for user in all_users:
-    #     all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
-    #     user_total = Sighting.query.order_by(Sighting.sighting_id).one()
+    for user in all_users:
+        user_total_sightings = Sighting.query.filter(Sighting.user_id == user.user_id).count()
+        pokedex_eval = f'{user_total_sightings}/{total_pokemon}'
+        dex_totals[User.user_id] = pokedex_eval
 
-    #     for row in all_sightings:
-    #         user_total += 1
-    #     dex_totals.append(user_total)
-
-
-    return render_template('all_users.html', all_users=all_users)
+    return render_template('all_users.html', all_users=all_users, dex_totals=dex_totals)
 
 
 @app.route('/pokemon')
-def all_trainers():
+def all_pokemon():
     """A list of all users in PokeTwitcher."""
 
     all_mon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
@@ -299,7 +245,11 @@ def pokemon_detail(pokemon_name):
     not_seen = user_count - seen
     totals = [seen, not_seen]
 
-    return render_template('pokemon_detail.html', pokemon=pokemon, user_id=user_id, totals=totals, p_type=p_type)
+    return render_template('pokemon_detail.html', 
+                           pokemon=pokemon, 
+                           user_id=user_id, 
+                           totals=totals, 
+                           p_type=p_type)
 
 
 @app.route('/pokemon/<string:pokemon_name>', methods=['POST'])
@@ -310,6 +260,11 @@ def add_sighting(pokemon_name):
     user = User.query.get_or_404(user_id)
     
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
+
+    # Through manual spamming I tested this, and it does work
+    if pokemon.chance_of_ditto():
+        pokemon = Pokemon.query.filter_by(name='Ditto').first_or_404()
+
     pokemon_id = pokemon.pokemon_id
 
     user_sighting = Sighting.query.filter((Sighting.user_id == user_id) & (Sighting.pokemon_id == pokemon_id)).one_or_none()
