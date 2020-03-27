@@ -2,8 +2,9 @@
 
 // Show Search Results
 
-function replaceSearchResults(results) {
-    $("#search-info").html(results.forecast);
+function replaceSearchResults(res) {
+    $("#search-info").html(res);
+    console.log(res='Missing?');
 }
 
 function showSearchResults(evt) {
