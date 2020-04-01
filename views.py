@@ -19,10 +19,6 @@ def index():
 
     app.logger.info('Rendering homepage... ')
 
-    # different view for logged-in user
-    # if session.get('user_id'):
-    #     return redirect()
-
     return render_template('homepage.html')
 
 
@@ -46,7 +42,6 @@ def get_user():
 
 
 @app.route('/user/register', methods=['POST'])
-# @user_free
 def add_new_user():
     """Add a new user to the database."""
 
@@ -65,7 +60,6 @@ def add_new_user():
 
 
 @app.route('/user/login', methods=['POST'])
-# @user_free
 def login():
     """Logs in user."""
 
@@ -177,6 +171,7 @@ def all_users():
                            dex_totals=dex_totals)
 
 
+@app.route('/pokemon/all')
 @app.route('/pokemon')
 def all_pokemon():
     """A list of all users of PokeTwitcher."""
@@ -194,8 +189,6 @@ def pokemon_detail(pokemon_name):
 
     user_id = session.get('user_id')
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
-    # TypeError: object of type 'InstrumentedAttribute' has no len()
-    # for kay
     all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
     p_type = ' '.join(pokemon.poke_type)
 
@@ -224,7 +217,7 @@ def add_sighting(pokemon_name):
     
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
 
-    # Through manual spamming I tested this, and it does work
+    # Through manual spamming I tested this, and it does work!
     if pokemon.chance_of_ditto():
         pokemon = Pokemon.query.filter_by(name='Ditto').first_or_404()
 
@@ -232,6 +225,7 @@ def add_sighting(pokemon_name):
 
     user_sighting = Sighting.query.filter((Sighting.user_id == user_id) & (Sighting.pokemon_id == pokemon_id)).one_or_none()
     
+    # Ensuring unique Pokémon only in a user's sightings
     if user_sighting is None:
         new_sighting = Sighting(user_id=user_id,
                                 pokemon_id=pokemon_id)
@@ -250,7 +244,8 @@ def search():
     # output: Plaintext item
 
     result = request.args.get('search')
-    pokemon = Pokemon.query.filter_by(name=result).one_or_none()
+    # capitalize() ensures exact match on pokemon name
+    pokemon = Pokemon.query.filter_by(name=result.capitalize()).one_or_none()
     user = User.query.filter_by(username=result).one_or_none()
 
     if pokemon is not None:
@@ -258,6 +253,6 @@ def search():
     elif user is not None:
         result = jsonify(user.as_dict())
     else:
-        result = f'{result} did not return any results, please try again.'
+        result = {'name': f'{result} did not return any results, please try again.'}
 
     return result

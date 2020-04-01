@@ -4,8 +4,6 @@
   <title>{% block title %}Inherits base{% endblock %} - PokéTwitcher</title>
   <link rel="stylesheet" 
         href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" 
-        href="{{ url_for('static', filename='css/styles.css') }}">
   <link rel="icon" type="img/png" sizes="16x16" 
         href="{{ url_for('static', filename='imgs/favicon_io/favicon.png') }}">
   <script src="https://code.jquery.com/jquery-3.4.1.js"
@@ -27,13 +25,19 @@
             {% include 'messages.html' %}
   </div>
 
-  <div class="card" id="search-info"></div>
+  <div class="card" id="search-info">
+    <a class="href" id="search-name" src="search-path"></a>
+    <img src="search-img"></img>
+  </div>
   <script src="/static/js/ajax.js"></script>
 
 {% block content %}{% endblock %}
 
-  <!-- Copywrite/Fair use/source disclaimer goes in footer? -->
-{% block footer %}{% endblock %}
+{% block footer %}
+<div class="container text-center">
+  <small>Pokémon, Pokémon character names, and all image contents within are Copyright The Pokémon Company.</small>
+</div>
+{% endblock %}
 
 </body>
 </html>
