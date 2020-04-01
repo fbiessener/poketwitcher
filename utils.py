@@ -1,6 +1,7 @@
 """General utilities file for routes in views."""
 
-from flask import Flask, session
+from flask import Flask, redirect, request, session, url_for, flash
+# render_template, redirect, request, session, flash, jsonify
 from functools import wraps
 from model import User, Pokemon, Sighting
 
@@ -12,7 +13,7 @@ def login_required(func):
         else:
             flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
             # url_for(get_user) ? needs to test
-            return redirect(url_for('get_user'), next=request.url)
+            return redirect(url_for('get_user', next=request.args.get('next')))
     return wrapper
 
 def user_free(func):

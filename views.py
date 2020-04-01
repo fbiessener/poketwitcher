@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.errorhandler(404)
 def page_not_found(e):
-    # note that we set the 404 status explicitly
+    """Custom 404 page."""
     return render_template('404.html'), 404
 
 
@@ -23,6 +23,15 @@ def index():
     #     return redirect()
 
     return render_template('homepage.html')
+
+
+@app.route('/about')
+def about():
+    """About page."""
+
+    app.logger.info('Rendering about page... ')
+
+    return render_template('about.html')
 
 
 @app.route('/user/load')
@@ -84,7 +93,7 @@ def logout():
 
     app.logger.info("User is now logged out")
     
-    flash('successfully logged out!')
+    flash('Successfully logged out!')
     return redirect('/')
 
 
@@ -123,7 +132,9 @@ def user_detail(user_id):
                                evaluation=evaluation)
     else:
         evaluation = willow_evaluator(user.username)
-        return render_template('user_detail.html', user=user, evaluation=evaluation)
+        return render_template('user_detail.html', 
+                               user=user, 
+                               evaluation=evaluation)
 
 
 @app.route('/user/my-profile')
@@ -165,7 +176,9 @@ def view_profile():
         evaluation = willow_evaluator(user.username)
 
         flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
-        return render_template('my_profile.html', user=user, evaluation=evaluation)
+        return render_template('my_profile.html', 
+                               user=user, 
+                               evaluation=evaluation)
 
 
 @app.route('/user/all')
@@ -182,7 +195,9 @@ def all_users():
         user_total_sightings = Sighting.query.filter_by(user_id=user.user_id).count()
         dex_totals[user.user_id] = f'{user_total_sightings}/{total_pokemon}'
 
-    return render_template('all_users.html', all_users=all_users, dex_totals=dex_totals)
+    return render_template('all_users.html', 
+                           all_users=all_users, 
+                           dex_totals=dex_totals)
 
 
 @app.route('/pokemon')
@@ -249,28 +264,13 @@ def add_sighting(pokemon_name):
     return redirect(f'/user/{user_id}')
 
 
-# @app.route('/search')
-# def search_form():
-#     """Search."""
-
-#     return
-
-
 @app.route('/search.json')
 def search():
     """Return a user or Pokemon dictionary for this search query."""
 
     # current error:
     # redirect: http://0.0.0.0:5000/search.json?search=Pikachu
-    # output: {
-    #            "gender": "F/M", 
-    #            "img": "https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png.png", 
-    #            "name": "Pikachu", 
-    #            "poke_type": [
-    #              "Electric"
-    #            ], 
-    #            "pokemon_id": 25
-    #         }
+    # output: Plaintext item
 
     result = request.args.get('search')
     pokemon = Pokemon.query.filter_by(name=result).one_or_none()
