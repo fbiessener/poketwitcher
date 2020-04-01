@@ -40,7 +40,11 @@ class User(ModelMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def as_dict(self):
-        return {'user_id': self.user_id, 'username': self.username}
+        """JSON compatible form for search queries."""
+                
+        return {'name': self.username, 
+                'path': self.user_id, 
+                'img': 'https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/photo-album.png'}
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -71,11 +75,11 @@ class Pokemon(ModelMixin, db.Model):
                 return True
 
     def as_dict(self):
-        return {'pokemon_id': self.pokemon_id, 
-                'name': self.name,
-                'gender': self.gender,
-                'poke_type': self.poke_type,
-                'img': self.img}
+        """JSON compatible form for search queries."""
+        return {'name': self.name, 
+                'path': self.name, 
+                'img': f'https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/{self.img}'
+                }
 
     def __repr__(self):
         """Provide helpful representation when printed."""
