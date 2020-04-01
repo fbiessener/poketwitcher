@@ -1,7 +1,6 @@
 """General utilities file for routes in views."""
 
 from flask import Flask, redirect, request, session, url_for, flash
-# render_template, redirect, request, session, flash, jsonify
 from functools import wraps
 from model import User, Pokemon, Sighting
 
@@ -28,7 +27,7 @@ def user_free(func):
     return wrapper
 
 def willow_evaluator(username, num_sightings=0):
-    """Returns evaluation of Pokedex/Life List based on number of sightings a user has."""
+    """Returns evaluation of Pokédex based on number of sightings a user has."""
 
     evaluation = ""
     
@@ -50,35 +49,24 @@ def willow_evaluator(username, num_sightings=0):
     return evaluation
 
 def user_sightings_renderer(user):
+    """Returns all Pokémon types, how many of each, and a Pokédex evaluation for a user's sightings."""
+
     num_sightings = 0
     type_data = {}
     
-    if user.sightings:
-        # Rendering DB data into forms usable for Willow_eval func and pie chart 
-        for row in user.sightings:
-            num_sightings += 1
-            pokemon = Pokemon.query.get(row.pokemon_id)
-            # Convert from list to string to avoid Unhashable Type error
-            p_type = ' '.join(pokemon.poke_type)
-            if p_type in type_data:
-                type_data[p_type] += 1
-            else:
-                type_data[p_type] = 1
-        # Unpacking the dictionary into lists for the pie chart to use for labels and data
-        ptypes, type_counts = list(type_data.keys()), list(type_data.values())
+    # Rendering DB data into forms usable for Willow_eval func and pie chart 
+    for row in user.sightings:
+        num_sightings += 1
+        pokemon = Pokemon.query.get(row.pokemon_id)
+        # Convert from list to string to avoid Unhashable Type error
+        poke_type = ' '.join(pokemon.poke_type)
+        if poke_type in type_data:
+            type_data[poke_type] += 1
+        else:
+            type_data[poke_type] = 1
+    # Unpacking the dictionary into lists for the pie chart to use for labels and data
+    ptypes, type_counts = list(type_data.keys()), list(type_data.values())
 
-        evaluation = willow_evaluator(user.username, num_sightings)
+    evaluation = willow_evaluator(user.username, num_sightings)
 
-        flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
-        return render_template('user_detail.html', 
-                               user=user, 
-                               ptypes=ptypes, 
-                               type_counts=type_counts, 
-                               evaluation=evaluation)
-
-    # route change to /myprofile so that get_404 and can't see other user's files
-    else:
-        evaluation = willow_evaluator(user.username)
-
-        flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
-        return render_template('my_profile.html', user=user, evaluation=evaluation)
+    return ptypes, type_counts, evaluation

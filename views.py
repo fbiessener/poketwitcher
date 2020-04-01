@@ -9,6 +9,7 @@ app = Flask(__name__)
 @app.errorhandler(404)
 def page_not_found(e):
     """Custom 404 page."""
+
     return render_template('404.html'), 404
 
 
@@ -79,7 +80,7 @@ def login():
         flash('Username or password is incorrect, please try again')
         return render_template('load_user.html')
 
-    flash(f'Welcome back, {user.username}!')
+    # flash(f'Welcome back, {user.username}!')
     return redirect('/user/my-profile')
 
 
@@ -111,19 +112,7 @@ def user_detail(user_id):
     
     if user.sightings:
         # Rendering DB data into forms usable for Willow_eval func and pie chart 
-        for row in user.sightings:
-            num_sightings += 1
-            pokemon = Pokemon.query.get(row.pokemon_id)
-            # Convert from list to string to avoid Unhashable Type error
-            p_type = ' '.join(pokemon.poke_type)
-            if p_type in type_data:
-                type_data[p_type] += 1
-            else:
-                type_data[p_type] = 1
-        # Unpacking the dictionary into lists for the pie chart to use for labels and data
-        ptypes, type_counts = list(type_data.keys()), list(type_data.values())
-
-        evaluation = willow_evaluator(user.username, num_sightings)
+        ptypes, type_counts, evaluation = user_sightings_renderer(user)
 
         return render_template('user_detail.html', 
                                user=user, 
@@ -150,19 +139,7 @@ def view_profile():
     
     if user.sightings:
         # Rendering DB data into forms usable for Willow_eval func and pie chart 
-        for row in user.sightings:
-            num_sightings += 1
-            pokemon = Pokemon.query.get(row.pokemon_id)
-            # Convert from list to string to avoid Unhashable Type error
-            p_type = ' '.join(pokemon.poke_type)
-            if p_type in type_data:
-                type_data[p_type] += 1
-            else:
-                type_data[p_type] = 1
-        # Unpacking the dictionary into lists for the pie chart to use for labels and data
-        ptypes, type_counts = list(type_data.keys()), list(type_data.values())
-
-        evaluation = willow_evaluator(user.username, num_sightings)
+        ptypes, type_counts, evaluation = user_sightings_renderer(user)
 
         flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
         return render_template('user_detail.html', 
