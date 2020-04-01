@@ -29,16 +29,16 @@ $(document).ready(function(){
           <table class="table table-bordered table-hover table-sm">
             <thead class="thead-light">
               <tr>
-                <th scope="col-sm">Image</th>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
+                <th class="w-25">Image</th>
+                <th class="w-25">ID</th>
+                <th class="w-50">Name</th>
               </tr>
             </thead>
             <tbody id="all-pokemon-table">
               {% for pokemon in all_mon %}
                 <tr>
-                  <th scope="row"><a href="/pokemon/{{ pokemon.name }}"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/{{ pokemon.img }}"></a></th>
-                  <th scope="row"><a href="/pokemon/{{ pokemon.name }}">{{ pokemon.pokemon_id }}</a></th>
+                  <td scope="row"><a href="/pokemon/{{ pokemon.name }}"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/{{ pokemon.img }}"></a></td>
+                  <td><a href="/pokemon/{{ pokemon.name }}">{{ pokemon.pokemon_id }}</a></td>
                   <td><a href="/pokemon/{{ pokemon.name }}">{{ pokemon.name }}</a></td>
                 </tr>
               {% endfor %}
