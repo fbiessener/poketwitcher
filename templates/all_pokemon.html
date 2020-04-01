@@ -37,7 +37,7 @@ $(document).ready(function(){
             <tbody id="all-pokemon-table">
               {% for pokemon in all_mon %}
                 <tr>
-                  <th scope="row"><a href="/pokemon/{{ pokemon.name }}"><img src="{{ pokemon.img }}"></a></th>
+                  <th scope="row"><a href="/pokemon/{{ pokemon.name }}"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/{{ pokemon.img }}"></a></th>
                   <th scope="row"><a href="/pokemon/{{ pokemon.name }}">{{ pokemon.pokemon_id }}</a></th>
                   <td><a href="/pokemon/{{ pokemon.name }}">{{ pokemon.name }}</a></td>
                 </tr>

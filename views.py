@@ -6,24 +6,10 @@ from utils import *
 
 app = Flask(__name__)
 
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     # note that we set the 404 status explicitly
-#     return render_template('404.html'), 404
-
-
-@app.route('/test')
-def test():
-    """Test"""
-
-    user = User.query.get(3)
-    # AttributeError: 'InstrumentedList' object has no attribute 'distinct'
-    # test = user.sightings.distinct(Pokemon.pokemon_id)
-    
-    # this finds distinct sightings, how do I use it?
-    # test = Sighting.query.filter_by(user_id=user.user_id).distinct()
-    # print(test)
-    return render_template('test.html')
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('404.html'), 404
 
 
 @app.route('/')

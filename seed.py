@@ -54,8 +54,11 @@ def load_pokemon():
         gender = genderizer(pokemon_id)
         poke_type = poke_typer(pokemon_id)
         ditto_chance = possibly_ditto(pokemon_id)
-        # store as 0.png?
-        img = 'https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png.png'
+        # img = 'https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png'
+        if pokemon_id == 808 or pokemon_id == 809:
+            img = '0.png'
+        else:
+            img = f'{pokemon_id}.png'
 
         pokemon = Pokemon(pokemon_id=pokemon_id, 
                           name=name,
