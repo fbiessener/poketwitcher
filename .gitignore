@@ -1,6 +1,4 @@
 env
-secrets.sh
-ignore/
 .DS_Store
 __pycache__/
 
