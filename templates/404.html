@@ -3,10 +3,14 @@
 {% block title %}Page Not Found{% endblock %}
 
 {% block content %}
-  <div class="card">
-      <h1>Error code: 404</h1>
+<div class="container-fluid">
+  <div class="card w-50 text-center mx-auto">
+    <div class="card-body">
+      <h1 class="card-title">Error code: 404</h1>
       <!-- how do I find the url they navigated from? -->
-      <p>What you were looking for is just not there.</p>
-      <p><a href="{{ url_for('index') }}">Try again, from the beginning</a></p>
+      <p class="card-text">What you were looking for is just not there</p>
+      <a href="{{ url_for('index') }}">Try again, from the beginning</a> 
+    </div>
   </div>
+</div>
 {% endblock %}

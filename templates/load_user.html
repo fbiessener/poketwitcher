@@ -2,9 +2,6 @@
 
 {% block title %}Please log in or register a new account{% endblock %}
 
-{% block head %}
-{% endblock %}
-
 {% block content %}
 
 <div class="container-fluid">
@@ -15,16 +12,22 @@
           <form action="/user/register" method="post" id="register-form">
             <h7>Haven't registered yet?<br>Make a new account here:</h7>
             <div>
-              <label for="email">Email: </label>  
-              <input type="text" name="email">
-            </div>
-            <div>
-              <label for="email">Username: </label>  
-              <input type="text" name="username">
-            </div>
-            <div>
-              <label for="password">Password: </label>
-              <input type="password" name="password">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th scope="row">Email: </th>
+                    <td class="no-border"><input type="text" name="email"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Username: </th>  
+                    <td class="no-border"><input type="text" name="username"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Password: </th>
+                    <td class="no-border"><input type="password" name="password"></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div>
               <input class="btn btn-light" type="submit" value="Submit">
@@ -37,7 +40,7 @@
       <div class="card">
         <div class="card-body" id="login" name="login">
           <form action="/user/login" method="post" id="login-form">
-            <h7>Already have an account? Log in here:</h7>
+            <h7>Already have an account?<br>Log in here:</h7>
             <input type="hidden" name="next" value="{{ request.args.get('next', '') }}" />
             <div>
               <label for="username">Username: </label>  
