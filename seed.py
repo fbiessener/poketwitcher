@@ -45,7 +45,7 @@ def load_pokemon():
 
     Pokemon.query.delete()
 
-    all_pogo_json = '/home/vagrant/src/projects/app/static/seed_data/all-pogo.json'
+    all_pogo_json = 'static/seed_data/all-pogo.json'
     poke_dict = json_reader(all_pogo_json)
 
     for i, key in enumerate(poke_dict):

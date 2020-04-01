@@ -17,7 +17,7 @@ def id_grabber():
 
     pokemon_ids = []
 
-    all_pogo_json = "/home/vagrant/src/projects/app/static/seed_data/all-pogo.json"
+    all_pogo_json = "static/seed_data/all-pogo.json"
     poke_dict = json_reader(all_pogo_json)
 
     for key in poke_dict:
@@ -32,7 +32,7 @@ def gender_grouper():
     male = {}
     genderless = {}
 
-    pgender_json = "/home/vagrant/src/projects/app/static/seed_data/pgender.json"
+    pgender_json = "static/seed_data/pgender.json"
     gender_dict = json_reader(pgender_json)
 
     # { [ {a: {}, b, c}, ...], ...}
@@ -84,7 +84,7 @@ def type_normalizer():
     
     types = {}
 
-    ptype_json = '/home/vagrant/src/projects/app/static/seed_data/ptype.json'
+    ptype_json = 'static/seed_data/ptype.json'
     type_list = json_reader(ptype_json)
 
     for i in range(len(type_list)):
@@ -108,7 +108,7 @@ def poke_typer(poke_id):
 def possibly_ditto(poke_id):
     """Checks whether a Pokemon has a chance of being Ditto instead, returns Boolean."""
 
-    ditto_json = '/home/vagrant/src/projects/app/static/seed_data/ditto.json'
+    ditto_json = 'static/seed_data/ditto.json'
     ditto_dict = json_reader(ditto_json)
 
     chance = False
