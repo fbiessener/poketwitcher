@@ -31,6 +31,26 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/search.json')
+def search():
+    """Return a user or Pokemon dictionary for this search query."""
+
+    result = request.args.get('search')
+    # capitalize() ensures exact match on pokemon name
+    pokemon = Pokemon.query.filter_by(name=result.capitalize()).one_or_none()
+    user = User.query.filter_by(username=result).one_or_none()
+
+    if pokemon is not None:
+        result = jsonify(pokemon.as_dict())
+    elif user is not None:
+        result = jsonify(user.as_dict())
+    else:
+        result = {'card': f'<div class="card" style="width: 18rem;"><div class="card-body"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png"><br>\'{result}\' did not return any results, please try another search</div></div>'}
+
+    return result
+
+##################################USER ROUTES###################################
+
 @app.route('/user/load')
 @user_free
 def get_user():
@@ -61,7 +81,7 @@ def add_new_user():
 
 @app.route('/user/login', methods=['POST'])
 def login():
-    """Logs in user."""
+    """Log in user."""
 
     # test with first or 404
     user = User.query.filter_by(username=request.form.get('username')).first()
@@ -78,48 +98,6 @@ def login():
     return redirect('/user/my-profile')
 
 
-@app.route('/logout')
-@app.route('/user/logout')
-@login_required
-def logout():
-    """Logs out user."""
-
-    del session['user_id']
-
-    app.logger.info("User is now logged out")
-    
-    flash('Successfully logged out!')
-    return redirect('/')
-
-
-@app.route('/user/<int:user_id>')
-def user_detail(user_id):
-    """A user's list of sightings."""
-
-    user = User.query.get_or_404(user_id)
-
-    if session.get('user_id') and (user.user_id == session.get('user_id')):
-        return redirect('/user/my-profile')
-    
-    num_sightings = 0
-    type_data = {}
-    
-    if user.sightings:
-        # Rendering DB data into forms usable for Willow_eval func and pie chart 
-        ptypes, type_counts, evaluation = user_sightings_renderer(user)
-
-        return render_template('user_detail.html', 
-                               user=user, 
-                               ptypes=ptypes, 
-                               type_counts=type_counts, 
-                               evaluation=evaluation)
-    else:
-        evaluation = willow_evaluator(user.username)
-        return render_template('user_detail.html', 
-                               user=user, 
-                               evaluation=evaluation)
-
-
 @app.route('/user/my-profile')
 @login_required
 def view_profile():
@@ -132,7 +110,7 @@ def view_profile():
     type_data = {}
     
     if user.sightings:
-        # Rendering DB data into forms usable for Willow_eval func and pie chart 
+        # Rendering DB data into forms usable for willow_eval func and pie chart 
         ptypes, type_counts, evaluation = user_sightings_renderer(user)
 
         flash('Professor Willow: How is your Pokédex coming? Let\'s see…')
@@ -141,8 +119,6 @@ def view_profile():
                                ptypes=ptypes, 
                                type_counts=type_counts, 
                                evaluation=evaluation)
-
-    # route change to /myprofile so that get_404 and can't see other user's files
     else:
         evaluation = willow_evaluator(user.username)
 
@@ -152,9 +128,37 @@ def view_profile():
                                evaluation=evaluation)
 
 
+@app.route('/user/<int:user_id>')
+def user_detail(user_id):
+    """An individual user's list of sightings."""
+
+    user = User.query.get_or_404(user_id)
+
+    if session.get('user_id') and (user.user_id == session.get('user_id')):
+        return redirect('/user/my-profile')
+    
+    num_sightings = 0
+    type_data = {}
+    
+    if user.sightings:
+        # Rendering DB data into forms usable for willow_eval func and pie chart 
+        ptypes, type_counts, evaluation = user_sightings_renderer(user)
+
+        return render_template('user_detail.html', 
+                               user=user, 
+                               ptypes=ptypes, 
+                               type_counts=type_counts, 
+                               evaluation=evaluation)
+    else:
+        evaluation = willow_evaluator(user.username)
+        return render_template('user_detail.html', 
+                               user=user, 
+                               evaluation=evaluation)
+
+
 @app.route('/user/all')
 def all_users():
-    """A list of all Pokemon in Pokemon Go."""
+    """A list of all users on PokéTwitcher."""
 
     all_users = User.query.order_by(User.user_id).all()
 
@@ -171,10 +175,25 @@ def all_users():
                            dex_totals=dex_totals)
 
 
+@app.route('/logout')
+@app.route('/user/logout')
+@login_required
+def logout():
+    """Log out user."""
+
+    del session['user_id']
+
+    app.logger.info("User is now logged out")
+    
+    flash('Successfully logged out!')
+    return redirect('/')
+
+################################POKEMON ROUTES##################################
+
 @app.route('/pokemon/all')
 @app.route('/pokemon')
 def all_pokemon():
-    """A list of all users of PokeTwitcher."""
+    """A list of all Pokémon in Pokémon Go."""
 
     all_mon = Pokemon.query.order_by(Pokemon.pokemon_id).all()
 
@@ -183,10 +202,10 @@ def all_pokemon():
 
 @app.route('/pokemon/<string:pokemon_name>')
 def pokemon_detail(pokemon_name):
-    """Detail page for an individual Pokemon."""
+    """Detail page for an individual Pokémon."""
 
-    # if user not logged-in, no add sighting button? or pop up on attempt?
-
+    # If no user_id in session, Jinja logic shows a different button redirecting 
+    # users to log in/register
     user_id = session.get('user_id')
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
     all_sightings = Sighting.query.order_by(Sighting.sighting_id).all()
@@ -217,6 +236,8 @@ def add_sighting(pokemon_name):
     
     pokemon = Pokemon.query.filter_by(name=pokemon_name).first_or_404()
 
+    # 16% chance logging a sighting of a Pokémon with ditto_chance = True will
+    # instead be logged as a Ditto
     # Through manual spamming I tested this, and it does work!
     if pokemon.chance_of_ditto():
         pokemon = Pokemon.query.filter_by(name='Ditto').first_or_404()
@@ -231,24 +252,8 @@ def add_sighting(pokemon_name):
                                 pokemon_id=pokemon_id)
         new_sighting.save()
 
-    # flash('Professor Willow: Wonderful! Your work is impeccable. Keep up the good work!')
-    return redirect(f'/user/{user_id}')
-
-
-@app.route('/search.json')
-def search():
-    """Return a user or Pokemon dictionary for this search query."""
-
-    result = request.args.get('search')
-    # capitalize() ensures exact match on pokemon name
-    pokemon = Pokemon.query.filter_by(name=result.capitalize()).one_or_none()
-    user = User.query.filter_by(username=result).one_or_none()
-
-    if pokemon is not None:
-        result = jsonify(pokemon.as_dict())
-    elif user is not None:
-        result = jsonify(user.as_dict())
+        flash('Professor Willow: Wonderful! Your work is impeccable. Keep up the good work!')
+        return redirect(f'/user/{user_id}')
     else:
-        result = {'card': f'<div class="card" style="width: 18rem;"><div class="card-body"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png"><br>\'{result}\' did not return any results, please try another search</div></div>'}
-
-    return result
+        flash('Professor Willow: You\'ve already seen this Pokémon!')
+        return redirect(f'/user/{user_id}')
