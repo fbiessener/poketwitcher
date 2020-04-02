@@ -231,17 +231,13 @@ def add_sighting(pokemon_name):
                                 pokemon_id=pokemon_id)
         new_sighting.save()
 
-    flash('Professor Willow: Wonderful! Your work is impeccable. Keep up the good work!')
+    # flash('Professor Willow: Wonderful! Your work is impeccable. Keep up the good work!')
     return redirect(f'/user/{user_id}')
 
 
 @app.route('/search.json')
 def search():
     """Return a user or Pokemon dictionary for this search query."""
-
-    # current error:
-    # redirect: http://0.0.0.0:5000/search.json?search=Pikachu
-    # output: Plaintext item
 
     result = request.args.get('search')
     # capitalize() ensures exact match on pokemon name
@@ -253,10 +249,6 @@ def search():
     elif user is not None:
         result = jsonify(user.as_dict())
     else:
-        # result = {'name': f'{result} did not return any results, please try again.',
-        #           'img': 'https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png',
-        #           'path': ''}
-
         result = {'card': f'<div class="card" style="width: 18rem;"><div class="card-body"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png"><br>\'{result}\' did not return any results, please try another search</div></div>'}
 
     return result

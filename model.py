@@ -1,4 +1,4 @@
-"""Models and database functions for PokeTwitcher project."""
+"""Models and database functions for PokéTwitcher project."""
 
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -7,16 +7,6 @@ import random
 
 db = SQLAlchemy()
 
-# remote test
-
-""" TODO:
-* test all of this
-* verify syntax of Boolean args
-* make decision regarding 'type' column in database and possible addtl relational table for it
-* make decision regarding 'gender' and possible addtl relational table for it
-* make decision for location column and datatype
-"""
-
 class ModelMixin:
     def save(self):
         db.session.add(self)
@@ -24,7 +14,7 @@ class ModelMixin:
 
 
 class User(ModelMixin, db.Model):
-    """User of PokeTwitcher website."""
+    """User of PokéTwitcher website."""
 
     __tablename__ = "users"
 
@@ -40,11 +30,7 @@ class User(ModelMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def as_dict(self):
-        """JSON compatible form for search queries."""
-
-        # return {'name': self.username, 
-        #         'path': self.user_id, 
-        #         'img': 'https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/photo-album.png'}
+        """JSON compatible Bootstrap card for rendering search queries."""
 
         return {'card': f'<div class="card" style="width: 18rem;"><div class="card-body">Results: <a href="/user/{self.user_id}" class="card-link">{self.username}</a><a href="/user/{self.user_id}" class="card-link"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/photo-album.png"></a></div></div>'}
 
@@ -55,7 +41,7 @@ class User(ModelMixin, db.Model):
 
 
 class Pokemon(ModelMixin, db.Model):
-    """A Pokemon available in the app Pokemon Go."""
+    """A Pokémon available in the app Pokémon Go."""
 
     __tablename__ = "pokemon"
 
@@ -65,11 +51,11 @@ class Pokemon(ModelMixin, db.Model):
     # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
     poke_type = db.Column(db.ARRAY(db.String()), nullable=False)
     ditto_chance = db.Column(db.Boolean(), nullable=False)
-    # img store as url
+    # img store as unique url path ending
     img = db.Column(db.String)
 
     def chance_of_ditto(self):
-        """Select Pokemon have a 16% chance of being Ditto instead."""
+        """Gives Pokémon with ditto_chance a 16% chance of recorded as Ditto instead in the sightings table."""
 
         if self.ditto_chance == True:
             # random() returns random floating point number in range [0.0, 1.0)
@@ -78,11 +64,6 @@ class Pokemon(ModelMixin, db.Model):
 
     def as_dict(self):
         """JSON compatible form for search queries."""
-
-        # return {'name': self.name, 
-        #         'path': f'<a class="link" href="/pokemon/{self.name}">{self.name}</a>', 
-        #         'img': f'<img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/{self.img}">'
-        #         }
 
         return {'card': f'<div class="card" style="width: 18rem;"><div class="card-body">Results: <a href="/pokemon/{self.name}" class="card-link">{self.name}</a><a href="/pokemon/{self.name}" class="card-link"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/{self.img}"></a></div></div>'}
 
@@ -93,7 +74,7 @@ class Pokemon(ModelMixin, db.Model):
 
 
 class Sighting(ModelMixin, db.Model):
-    """Sighting of an individual Pokemon, belongs to a User and a Pokemon."""
+    """Sighting of an individual Pokémon, belongs to a User and a Pokemon."""
 
     __tablename__ = "sightings"
 
@@ -101,11 +82,10 @@ class Sighting(ModelMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'))
     timestamp = db.Column(db.DateTime(), server_default=db.func.current_timestamp())
-    ############################################################
     # Possibly future maps API implementation
     # location = db.Column(db.String(200))
 
-    # Define relationships to user and pokemon
+    # Define relationships to User and Pokémon
     user = db.relationship("User", backref=db.backref("sightings", order_by=sighting_id))
     pokemon = db.relationship("Pokemon", backref=db.backref("sightings", order_by=sighting_id))
 

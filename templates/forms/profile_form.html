@@ -1,6 +1,13 @@
 <div class="container-fluid">
   <div class="page-header">
-    <h2>{{ user.username }}'s Pokédex:</h2>
+    <div class="row">
+      <div class="col"><h2>{{ user.username }}'s Pokédex:</h2></div>
+      <div class="col">
+        <div class="text-center">
+          <a class="btn btn-light" href="/pokemon" role="button" name="pokemon-list-btn">Need to log a new sighting? (View All Pokemon)</a>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="col">
@@ -8,7 +15,7 @@
         <div class="col">
           <div class="card">
             <div class="card-body">{{ evaluation }}</div>
-          </div>
+          </div><br>
         </div> 
       </div>
       <div class="row">
@@ -96,14 +103,6 @@
               });
             </script>
           {% endif %}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <br>
-          <div position="left-align">
-            <a class="btn btn-light" href="/pokemon" role="button" name="pokemon-list-btn">Need to log a new sighting? (View All Pokemon)</a>
-          </div>        
         </div>
       </div>
     </div>

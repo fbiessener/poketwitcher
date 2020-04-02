@@ -10,26 +10,26 @@
       <div class="card">
         <div class="card-body" id="register" name="register">
           <form action="/user/register" method="post" id="register-form">
-            <h7>Haven't registered yet?<br>Make a new account here:</h7>
+            <h5>Haven't registered yet? Make a new account here:</h5>
             <div>
               <table class="table table-sm">
                 <tbody>
                   <tr>
-                    <th scope="row">Email: </th>
-                    <td class="no-border"><input type="text" name="email"></td>
+                    <th scope="row" class="border-0">Email: </th>
+                    <td class="border-0"><input type="text" name="email"></td>
                   </tr>
                   <tr>
-                    <th scope="row">Username: </th>  
-                    <td class="no-border"><input type="text" name="username"></td>
+                    <th scope="row" class="border-0">Username: </th>  
+                    <td class="border-0"><input type="text" name="username"></td>
                   </tr>
                   <tr>
-                    <th scope="row">Password: </th>
-                    <td class="no-border"><input type="password" name="password"></td>
+                    <th scope="row" class="border-0">Password: </th>
+                    <td class="border-0"><input type="password" name="password"></td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div>
+            <div class="text-right">
               <input class="btn btn-light" type="submit" value="Submit">
             </div>
           </form>
@@ -40,17 +40,23 @@
       <div class="card">
         <div class="card-body" id="login" name="login">
           <form action="/user/login" method="post" id="login-form">
-            <h7>Already have an account?<br>Log in here:</h7>
+            <h5>Already have an account? Log in here:</h5>
             <input type="hidden" name="next" value="{{ request.args.get('next', '') }}" />
             <div>
-              <label for="username">Username: </label>  
-              <input type="text" name="username">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th scope="row" class="border-0">Username: </th>  
+                    <td class="border-0"><input type="text" name="username"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="border-0">Password: </th>
+                    <td class="border-0"><input type="password" name="password"></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div>
-              <label for="password">Password: </label>
-              <input type="password" name="password">
-            </div>
-            <div>
+            <div class="text-right">
               <input class="btn btn-light" type="submit" value="Submit">
             </div>
           </form>

@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col">
-      <div class="card">
+      <br><div class="card">
         <div class="card-body">
           <div class="page-header">
             <h2>{{ pokemon.name }}</h2>
@@ -44,8 +44,12 @@
           </div>
         </div>
       </div>
+      <br><div class="text-center">
+        <a class="btn btn-light" href="/pokemon" role="button" name="pokemon-list-btn">Spotted a different Pokemon? (View All Pokemon)</a>
+      </div> 
     </div>
     <div class="col">
+      <div class="row"></div>
       <div class="row">
         <div class="col">
           <canvas id="sighting-distribution" width="400" height="400"></canvas>
@@ -71,20 +75,12 @@
                 options: {
                     title: {
                         display: true,
-                        text: 'Percentage of trainers with {{ pokemon.name }} sightings:',
+                        text: 'Percentage of users with {{ pokemon.name }} sightings:',
                         position: 'top'
                     }
                 }
             });
           </script>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <br>
-          <div position="left-align">
-            <a class="btn btn-light" href="/pokemon" role="button" name="pokemon-list-btn">Spotted a different Pokemon? (View All Pokemon)</a>
-          </div>        
         </div>
       </div>
     </div>
