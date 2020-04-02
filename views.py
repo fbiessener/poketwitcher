@@ -253,6 +253,10 @@ def search():
     elif user is not None:
         result = jsonify(user.as_dict())
     else:
-        result = {'name': f'{result} did not return any results, please try again.'}
+        # result = {'name': f'{result} did not return any results, please try again.',
+        #           'img': 'https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png',
+        #           'path': ''}
+
+        result = {'card': f'<div class="card" style="width: 18rem;"><div class="card-body"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585321664/PokeTwitcher/0.png"><br>\'{result}\' did not return any results, please try another search</div></div>'}
 
     return result

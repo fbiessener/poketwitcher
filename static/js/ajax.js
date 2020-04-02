@@ -25,6 +25,6 @@ $('#search-form').on('submit', (evt) => {
   let url = '/search.json';
   const formValues = $('#search-field').serialize();
   $.get(url, formValues, (response) => {
-    $('#search-name').text(response.name);
+    $('#search-info').html(response.card);
   });
 });

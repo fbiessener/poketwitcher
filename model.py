@@ -41,10 +41,12 @@ class User(ModelMixin, db.Model):
 
     def as_dict(self):
         """JSON compatible form for search queries."""
-                
-        return {'name': self.username, 
-                'path': self.user_id, 
-                'img': 'https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/photo-album.png'}
+
+        # return {'name': self.username, 
+        #         'path': self.user_id, 
+        #         'img': 'https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/photo-album.png'}
+
+        return {'card': f'<div class="card" style="width: 18rem;"><div class="card-body">Results: <a href="/user/{self.user_id}" class="card-link">{self.username}</a><a href="/user/{self.user_id}" class="card-link"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/photo-album.png"></a></div></div>'}
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -76,10 +78,13 @@ class Pokemon(ModelMixin, db.Model):
 
     def as_dict(self):
         """JSON compatible form for search queries."""
-        return {'name': self.name, 
-                'path': self.name, 
-                'img': f'https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/{self.img}'
-                }
+
+        # return {'name': self.name, 
+        #         'path': f'<a class="link" href="/pokemon/{self.name}">{self.name}</a>', 
+        #         'img': f'<img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/{self.img}">'
+        #         }
+
+        return {'card': f'<div class="card" style="width: 18rem;"><div class="card-body">Results: <a href="/pokemon/{self.name}" class="card-link">{self.name}</a><a href="/pokemon/{self.name}" class="card-link"><img src="https://res.cloudinary.com/poketwitcher/image/upload/v1585709529/PokeTwitcher/{self.img}"></a></div></div>'}
 
     def __repr__(self):
         """Provide helpful representation when printed."""
