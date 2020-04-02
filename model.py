@@ -51,7 +51,7 @@ class Pokemon(ModelMixin, db.Model):
     # https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.ARRAY
     poke_type = db.Column(db.ARRAY(db.String()), nullable=False)
     ditto_chance = db.Column(db.Boolean(), nullable=False)
-    # img store as unique url path ending
+    # img stored as unique url path ending for Cloudinary location
     img = db.Column(db.String)
 
     def chance_of_ditto(self):
@@ -82,7 +82,7 @@ class Sighting(ModelMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.pokemon_id'))
     timestamp = db.Column(db.DateTime(), server_default=db.func.current_timestamp())
-    # Possibly future maps API implementation
+    # Possible future maps API implementation
     # location = db.Column(db.String(200))
 
     # Define relationships to User and Pokémon
@@ -99,7 +99,7 @@ class Sighting(ModelMixin, db.Model):
 # Helper functions
 
 def example_data():
-    """Create sample data."""
+    """Create sample data for testing."""
 
     # Empty out existing data in-between tests
     User.query.delete()

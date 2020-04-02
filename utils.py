@@ -11,7 +11,8 @@ def login_required(func):
             return func(*args, **kwargs)
         else:
             flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
-            # url_for(get_user) ? needs to test
+            # Only page they can try to get to is my-profile, which they are auto
+            # redirected to upon log-in, 'next' is hard to test
             return redirect(url_for('get_user', next=request.args.get('next')))
     return wrapper
 
@@ -22,7 +23,7 @@ def user_free(func):
             return func(*args, **kwargs)
         else:
             flash('Professor Willows words rang out. \"There\'s a time and a place for everything. But not now!\"')
-            # redirect to page they were on?
+            # Redirect to page they were on for better UX?
             return redirect('/')
     return wrapper
 

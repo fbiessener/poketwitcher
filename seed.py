@@ -9,7 +9,7 @@ from server import app
 from fertilizer import *
 
 def load_users():
-    """Create user with Fake and load into database."""
+    """Load users generated with Faker into database."""
 
     print("Users")
 
@@ -28,7 +28,7 @@ def load_users():
                     username=username,
                     password=password)
 
-        # significantly slows down the db, does work. hash is v long
+        # Hashes generated password before a user is saved/committed to the db
         user.create_passhash(password)
 
         # Add to session and commit
@@ -39,7 +39,7 @@ def load_users():
             print(i)
 
 def load_pokemon():
-    """Load all the Pokemon Go pokemon (586) from JSON."""
+    """Load all the Pokémon Go Pokémon (586) and stats from JSONs."""
 
     print("Pokemon")
 
@@ -75,7 +75,7 @@ def load_pokemon():
             print(i)
 
 def load_sightings():
-    """Load ratings from u.sightings into database."""
+    """Load sightings generated with Faker and random module into database."""
 
     print("Sightings")
 

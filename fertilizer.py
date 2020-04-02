@@ -3,7 +3,7 @@
 import json
 
 def json_reader(file_path):
-    """Converts json files into Python dictionaries."""
+    """Converts JSON files into Python dictionaries."""
 
     with open(file_path) as file:
         json_dict = json.load(file)
@@ -11,7 +11,7 @@ def json_reader(file_path):
     return json_dict
 
 def id_grabber():
-    """Grab all the Pokemon IDs possible for sighting generation."""
+    """Grab all the Pokémon IDs possible for sighting generation."""
 
     # SELECT pokemon_id FROM pokemon;
 
@@ -26,7 +26,7 @@ def id_grabber():
     return pokemon_ids
 
 def gender_grouper():
-    """Returns dictionaries of all Pokemon grouped by gender."""
+    """Returns dictionaries of all Pokémon grouped by gender."""
 
     female = {}
     male = {}
@@ -80,7 +80,7 @@ def genderizer(poke_id):
     return gender
 
 def type_normalizer():
-    """Returns dictionary of correct type for 'Normal' form Pokemon."""
+    """Returns dictionary of correct type(s) for Pokémon."""
     
     types = {}
 
@@ -99,14 +99,14 @@ def type_normalizer():
     return types
 
 def poke_typer(poke_id):
-    """Determines type(s) of an individual Pokemon."""
+    """Determines type(s) of an individual Pokémon."""
 
     types = type_normalizer()
 
     return types.get(poke_id)
 
 def possibly_ditto(poke_id):
-    """Checks whether a Pokemon has a chance of being Ditto instead, returns Boolean."""
+    """Checks whether a Pokémon has a chance of being Ditto instead, returns Boolean."""
 
     ditto_json = 'static/seed_data/ditto.json'
     ditto_dict = json_reader(ditto_json)
@@ -120,7 +120,7 @@ def possibly_ditto(poke_id):
     return chance
 
 # def all_types():
-#     """All possible Pokemon types from DB."""
+#     """All possible Pokémon types from DB."""
 
 #     types = []
 #     all_pmon = type_normalizer()
