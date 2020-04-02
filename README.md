@@ -17,6 +17,7 @@ Fiona comes from blank background, interest in blank. Beginning to code where/wh
 * Bootstrap
 * jQuery
 * Javascript (AJAX, JSON)
+* Chart.js
 
 ## Features
 
@@ -29,6 +30,9 @@ Fiona comes from blank background, interest in blank. Beginning to code where/wh
 ### Testing Suite
 ### GoogleMaps API
 Users will log location of sighting and profiles will have a mini map with markers of sightings
+### Bulbapedia API
+https://bulbapedia.bulbagarden.net/w/api.php?action=help&modules=main
+### Ranking of users/dynmanic sorting of all-* tables
 
 ## Installation
 
