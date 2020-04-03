@@ -1,4 +1,4 @@
-"""Utility file to seed poketwitcher database from Pokemon API and Faker data in seed_data/"""
+"""Utility file to seed poketwitcher database from Pokemon API and Faker data in seed_data/."""
 
 from sqlalchemy import func
 from faker import Faker

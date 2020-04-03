@@ -13,11 +13,11 @@ Fiona comes from blank background, interest in blank. Beginning to code where/wh
 * PostGreSQL
 * SQLAlchemy
 * HTML
-* CSS
 * Bootstrap
 * jQuery
 * Javascript (AJAX, JSON)
 * Chart.js
+* Faker
 
 ## Features
 
@@ -33,6 +33,7 @@ Users will log location of sighting and profiles will have a mini map with marke
 ### Bulbapedia API
 https://bulbapedia.bulbagarden.net/w/api.php?action=help&modules=main
 ### Ranking of users/dynmanic sorting of all-* tables
+### Websocket Chat rooms?
 
 ## Installation
 

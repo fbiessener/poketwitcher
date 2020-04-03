@@ -1,3 +1,5 @@
+"""Routes for server."""
+
 # its dangerous? click?
 from flask import Flask, render_template, redirect, request, session, flash, jsonify
 
